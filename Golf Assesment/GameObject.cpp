@@ -5,7 +5,7 @@
 void GameObject::MakeNormal(void)
 {
 	//can do this in 2d
-	vec2 temp = vertices[1] - vertices[0];
+	vec3 temp = vertices[1] - vertices[0];
 	normal(0) = temp(1);
 	normal(1) = -temp(0);
 	normal.Normalise();
@@ -38,21 +38,6 @@ void GameObject::DrawPolygon()
 {
 }
 
-GameObject::GameObject(bool isSphere)
-{
-	_isSphere = isSphere;
-}
-
-GameObject::GameObject()
-{
-	_isSphere = false;
-
-}
-
-
-GameObject::~GameObject()
-{
-}
 
 
 void GameObject::Draw()
@@ -62,10 +47,6 @@ void GameObject::Draw()
 	else
 		DrawPolygon();
 }
-
-
-
-
 
 void GameObject::DoBallCollision(GameObject &b)
 {
@@ -87,7 +68,6 @@ bool GameObject::HasHitPlane(GameObject &c)
 {
 
 	vec3 vel = GetVelocity();
-
 	
 	//if moving away from plane, cannot hit
 	if (vel.Dot(c.GetNormal()) >= 0.0) return false;
@@ -119,19 +99,21 @@ bool GameObject::HasHitBall(GameObject &b)
 void GameObject::HitPlane(GameObject &c)
 {
 	//reverse velocity component perpendicular to plane  
-	double comp = GetVelocity().Dot(c.normal) * (1.0 + gCoeffRestitution);
+	double comp = GetVelocity().Dot(c.normal) * (1.0 + GetRestitution());
 	vec3 delta = vec3(0,0,0) -(c.normal * comp);
 	SetVelocity(GetVelocity() + delta);
 
 	//make some particles
 	int n = (rand() % 4) + 3;
-	vec3 pos(position(0), radius / 2.0, position(1));
-	vec3 oset(c.normal(0), 0.0, c.normal(1));
-	pos += (oset*radius);
-	for (int i = 0;i < n;i++)
-	{
-		gTable.parts.AddParticle(pos);
-	}
+
+
+	//vec3 pos = GetPosition();
+	//vec3 oset(c.normal(0), 0.0, c.normal(1));
+	//pos += (oset*radius);
+	//for (int i = 0;i < n;i++)
+	//{
+	//	gTable.parts.AddParticle(pos);
+	//}
 
 	/*
 		//assume elastic collision
@@ -151,36 +133,39 @@ void GameObject::HitPlane(GameObject &c)
 void GameObject::HitBall(GameObject &b)
 {
 	//find direction from other ball to this ball
-	vec2 relDir = (position - b.position).Normalised();
+	vec3 relDir = (GetPosition() - b.GetPosition()).Normalised();
 
 	//split velocities into 2 parts:  one component perpendicular, and one parallel to 
 	//the collision plane, for both balls
 	//(NB the collision plane is defined by the point of contact and the contact normal)
-	float perpV = (float)velocity.Dot(relDir);
-	float perpV2 = (float)b.velocity.Dot(relDir);
-	vec2 parallelV = velocity - (relDir*perpV);
-	vec2 parallelV2 = b.velocity - (relDir*perpV2);
+	float perpV = (float)GetVelocity().Dot(relDir);
+	float perpV2 = (float)b.GetVelocity().Dot(relDir);
+	vec3 parallelV = GetVelocity() - (relDir*perpV);
+	vec3 parallelV2 = b.GetVelocity() - (relDir*perpV2);
 
 	//Calculate new perpendicluar components:
 	//v1 = (2*m2 / m1+m2)*u2 + ((m1 - m2)/(m1+m2))*u1;
 	//v2 = (2*m1 / m1+m2)*u1 + ((m2 - m1)/(m1+m2))*u2;
-	float sumMass = mass + b.mass;
-	float perpVNew = (float)((perpV*(mass - b.mass)) / sumMass) + (float)((perpV2*(2.0*b.mass)) / sumMass);
-	float perpVNew2 = (float)((perpV2*(b.mass - mass)) / sumMass) + (float)((perpV*(2.0*mass)) / sumMass);
+
+	float thisMass = GetMass(), otherMass = b.GetMass();
+
+	float sumMass = thisMass + otherMass;
+	float perpVNew = (float)((perpV*(thisMass - otherMass)) / sumMass) + (float)((perpV2*(2.0*otherMass)) / sumMass);
+	float perpVNew2 = (float)((perpV2*(otherMass - thisMass)) / sumMass) + (float)((perpV*(2.0*thisMass)) / sumMass);
 
 	//find new velocities by adding unchanged parallel component to new perpendicluar component
-	velocity = parallelV + (relDir*perpVNew);
-	b.velocity = parallelV2 + (relDir*perpVNew2);
+	SetVelocity(parallelV + (relDir*perpVNew));
+	b.SetVelocity(parallelV2 + (relDir*perpVNew2));
 
 
 	//make some particles
-	int n = (rand() % 5) + 5;
+	/*int n = (rand() % 5) + 5;
 	vec3 pos(position(0), radius / 2.0, position(1));
 	vec3 oset(relDir(0), 0.0, relDir(1));
 	pos += (oset*radius);
 	for (int i = 0;i < n;i++)
 	{
 		gTable.parts.AddParticle(pos);
-	}
+	}*/
 }
 

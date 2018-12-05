@@ -1,6 +1,10 @@
 #pragma once
+
+#include"stdafx.h"
+
 #include "Transform.h"
 #include<glut.h>
+
 //An object which will be rendered on screen, inherts transform because it will have a position and generally be able to move
 
 enum DrawMode {Solid,Wireframe};
@@ -12,11 +16,11 @@ private:
 	//for Spheres
 	DrawMode drawMode = DrawMode::Wireframe;
 
-	bool _isSphere;
-	float radius = 0.0f;
+	
+	float radius = 0.05f;
 
 	//for other objects
-	vec3	vertices[2];
+	
 	vec3	centre;
 	vec3	normal;
 
@@ -28,11 +32,15 @@ private:
 
 public:
 
+	GameObject() {
+		colour = vec3(1.0f, 1.0f, 1.0f);
+		_isSphere = false;
+	}
+
+	vec3	vertices[2];
 	vec3 colour;//object colour
 
-	GameObject(bool isSphere = false);
-	GameObject();
-	~GameObject();
+	bool _isSphere = false;
 
 	//drawmode get/set
 	void SetDrawMode(DrawMode mode) { drawMode = mode; };
@@ -44,7 +52,9 @@ public:
 
 	vec3 GetNormal() { return normal; };
 
-	
+	void SetUpMesh() { MakeNormal(); MakeCentre(); };
+
+
 
 	void DoPlaneCollision(GameObject &c);
 	void DoBallCollision(GameObject &b);

@@ -1,7 +1,7 @@
 /*-----------------------------------------------------------
   Simulation Source File
   -----------------------------------------------------------*/
-#include"stdafx.h"
+
 #include"simulation.h"
 #include<stdio.h>
 #include<stdlib.h>
@@ -22,7 +22,7 @@ vec2	gPlaneNormal_Right(-1.0,0.0);
 vec2	gPlaneNormal_Bottom(0.0,-1.0);
 */
 
-table gTable;
+//table gTable;
 
 static const float gRackPositionX[] = {0.0f,0.0f,(BALL_RADIUS*2.0f),(-BALL_RADIUS*2.0f),(BALL_RADIUS*4.0f)}; 
 static const float gRackPositionZ[] = {0.5f,0.0f,(-BALL_RADIUS*3.0f),(-BALL_RADIUS*3.0f)}; 
@@ -50,11 +50,11 @@ void cushion::MakeCentre(void)
 	centre += vertices[1];
 	centre/=2.0;
 }
-
-#pragma region Ball Class Members
-/*-----------------------------------------------------------
-  ball class members
-  -----------------------------------------------------------*/
+//
+//#pragma region Ball Class Members
+///*-----------------------------------------------------------
+//  ball class members
+//  -----------------------------------------------------------*/
 int ball::ballIndexCnt = 0;
 
 void ball::Reset(void)
@@ -167,7 +167,7 @@ void ball::HitPlane(const cushion &c)
 	pos += (oset*radius);
 	for (int i = 0;i < n;i++)
 	{
-		gTable.parts.AddParticle(pos);
+	//	gTable.parts.AddParticle(pos);
 	}
 
 	/*
@@ -217,7 +217,7 @@ void ball::HitBall(ball &b)
 	pos += (oset*radius);
 	for (int i = 0;i < n;i++)
 	{
-		gTable.parts.AddParticle(pos);
+	//	gTable.parts.AddParticle(pos);
 	}
 }
 #pragma endregion
@@ -268,74 +268,78 @@ void particleSet::update(int ms)
 /*-----------------------------------------------------------
   table class members
   -----------------------------------------------------------*/
-void table::SetupCushions(void)
-{
-	cushions[0].vertices[0](0) = -TABLE_X; 
-	cushions[0].vertices[0](1) = -TABLE_Z; 
-	cushions[0].vertices[1](0) = -TABLE_X; 
-	cushions[0].vertices[1](1) = TABLE_Z; 
-
-	cushions[1].vertices[0](0) = -TABLE_X; 
-	cushions[1].vertices[0](1) = TABLE_Z; 
-	cushions[1].vertices[1](0) = TABLE_X; 
-	cushions[1].vertices[1](1) = TABLE_Z; 
-
-	cushions[2].vertices[0](0) = TABLE_X; 
-	cushions[2].vertices[0](1) = TABLE_Z; 
-	cushions[2].vertices[1](0) = TABLE_X; 
-	cushions[2].vertices[1](1) = -TABLE_Z + 0.3; 
-
-	cushions[3].vertices[0](0) = TABLE_X; 
-	cushions[3].vertices[0](1) = -TABLE_Z + 0.3; 
-	cushions[3].vertices[1](0) = TABLE_X - 0.3; 
-	cushions[3].vertices[1](1) = -TABLE_Z; 
-
-	cushions[4].vertices[0](0) = TABLE_X - 0.3; 
-	cushions[4].vertices[0](1) = -TABLE_Z; 
-	cushions[4].vertices[1](0) = -TABLE_X; 
-	cushions[4].vertices[1](1) = -TABLE_Z; 
-
-	for(int i=0;i<NUM_CUSHIONS;i++)
-	{
-		cushions[i].MakeCentre();
-		cushions[i].MakeNormal();
-	}
-}
-
-void table::Update(int ms)
-{
-	//check for collisions for each ball
-	for(int i=0;i<NUM_BALLS;i++) 
-	{
-		for(int j=0;j<NUM_CUSHIONS;j++)
-		{
-			balls[i].DoPlaneCollision(cushions[j]);
-		}
-
-		for(int j=(i+1);j<NUM_BALLS;j++) 
-		{
-			balls[i].DoBallCollision(balls[j]);
-		}
-	}
-	
-	//update all balls
-	for(int i=0;i<NUM_BALLS;i++) balls[i].Update(ms);
-
-	//update particles
-	parts.update(ms);
-
-	//make some new particles
-	//vec3 pos(0.0,BALL_RADIUS,0.0);
-	//parts.AddParticle(pos);
-}
-
-bool table::AnyBallsMoving(void) const
-{
-	//return true if any ball has a non-zero velocity
-	for(int i=0;i<NUM_BALLS;i++) 
-	{
-		if(balls[i].velocity(0)!=0.0) return true;
-		if(balls[i].velocity(1)!=0.0) return true;
-	}
-	return false;
-}
+//void table::SetupCushions(void)
+//{
+//	cushions[0].vertices[0](0) = -TABLE_X;
+//	cushions[0].vertices[0](1) = -TABLE_Z; 
+//	cushions[0].vertices[1](0) = -TABLE_X; 
+//	cushions[0].vertices[1](1) = TABLE_Z; 
+//
+//	cushions[1].vertices[0](0) = -TABLE_X; 
+//	cushions[1].vertices[0](1) = TABLE_Z; 
+//	cushions[1].vertices[1](0) = TABLE_X; 
+//	cushions[1].vertices[1](1) = TABLE_Z; 
+//
+//	cushions[2].vertices[0](0) = TABLE_X; 
+//	cushions[2].vertices[0](1) = TABLE_Z; 
+//	cushions[2].vertices[1](0) = TABLE_X; 
+//	cushions[2].vertices[1](1) = -TABLE_Z + 0.3; 
+//
+//	cushions[3].vertices[0](0) = TABLE_X; 
+//	cushions[3].vertices[0](1) = -TABLE_Z + 0.3; 
+//	cushions[3].vertices[1](0) = TABLE_X - 0.3; 
+//	cushions[3].vertices[1](1) = -TABLE_Z; 
+//
+//	cushions[4].vertices[0](0) = TABLE_X - 0.3; 
+//	cushions[4].vertices[0](1) = -TABLE_Z; 
+//	cushions[4].vertices[1](0) = -TABLE_X; 
+//	cushions[4].vertices[1](1) = -TABLE_Z; 
+//
+//	for(int i=0;i<NUM_CUSHIONS;i++)
+//	{
+//		//cushions[i].MakeCentre();
+//		//cushions[i].MakeNormal();
+//		cushions[i].SetUpMesh();
+//	}
+//}
+//
+//void table::Update(int ms)
+//{
+//	//check for collisions for each ball
+//	for(int i=0;i<NUM_BALLS;i++) 
+//	{
+//		for(int j=0;j<NUM_CUSHIONS;j++)
+//		{
+//			balls[i].DoPlaneCollision(cushions[j]);
+//		}
+//
+//		for(int j=(i+1);j<NUM_BALLS;j++) 
+//		{
+//			balls[i].DoBallCollision(balls[j]);
+//		}
+//	}
+//	
+//	//update all balls
+//	for(int i=0;i<NUM_BALLS;i++) balls[i].Update(ms);
+//
+//	//update particles
+//	parts.update(ms);
+//
+//	//make some new particles
+//	//vec3 pos(0.0,BALL_RADIUS,0.0);
+//	//parts.AddParticle(pos);
+//}
+//
+//bool table::AnyBallsMoving(void)
+//{
+//	//return true if any ball has a non-zero velocity
+//	for(int i=0;i<NUM_BALLS;i++) 
+//	{
+//		vec3 velocity = balls[i].GetVelocity();
+//
+//		if(velocity(0)!=0.0) return true;
+//		if(velocity(1)!=0.0) return true;
+//		if(velocity(2)!=0.0) return true;
+//	}
+//	return false;
+//}

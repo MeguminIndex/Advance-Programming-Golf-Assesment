@@ -1,7 +1,10 @@
+#pragma once
 /*-----------------------------------------------------------
   Simulation Header File
   -----------------------------------------------------------*/
 #include"vecmath.h"
+#include"stdafx.h"
+
 
 /*-----------------------------------------------------------
   Macros
@@ -110,19 +113,23 @@ public:
 /*-----------------------------------------------------------
   table class
   -----------------------------------------------------------*/
-class table
-{
-public:
-	ball balls[NUM_BALLS];	
-	cushion cushions[NUM_CUSHIONS];
-	particleSet parts;
-
-	void SetupCushions(void);
-	void Update(int ms);	
-	bool AnyBallsMoving(void) const;
-};
+//class table
+//{
+//public:
+//
+//	//ball balls[NUM_BALLS];
+//	GolfBall balls[NUM_BALLS];
+//	//cushion cushions[NUM_CUSHIONS];
+//	GameObject cushions[NUM_CUSHIONS];
+//
+//	particleSet parts;
+//
+//	void SetupCushions(void);
+//	void Update(int ms);	
+//	bool AnyBallsMoving(void);
+//};
 
 /*-----------------------------------------------------------
   global table
   -----------------------------------------------------------*/
-extern table gTable;
+//extern table gTable;

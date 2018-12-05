@@ -16,7 +16,7 @@ void Transform::SetPosition(vec3 newPos)
 	position = newPos;
 }
 
-void Transform::SetPosition(float x = 0, float y = 0, float z = 0)
+void Transform::SetPosition(float x, float y, float z)
 {
 	position.elem[0] = x;
 	position.elem[1] = y;

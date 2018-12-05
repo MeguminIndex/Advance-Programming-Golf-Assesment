@@ -5,8 +5,11 @@
 #include "stdafx.h"
 #include<glut.h>
 #include<math.h>
-#include"simulation.h"
 
+#include"simulation.h"
+#include"Table.h"
+
+Table gTable;
 
 //cue variables
 float gCueAngle = 0.0;
@@ -135,18 +138,24 @@ void RenderScene(void) {
 	gluLookAt(gCamPos(0),gCamPos(1),gCamPos(2),gCamLookAt(0),gCamLookAt(1),gCamLookAt(2),0.0f,1.0f,0.0f);
 
 	//draw the ball
-	glColor3f(1.0,1.0,1.0);
+	//glColor3f(1.0,1.0,1.0);
 	for(int i=0;i<NUM_BALLS;i++)
 	{
+		vec3 colour = gTable.balls[i].colour;
+
+		glColor3f(colour.elem[0],colour.elem[1],colour.elem[2]);
+
+		vec3 position = gTable.balls[i].GetPosition();
+
 		glPushMatrix();
-		glTranslatef(gTable.balls[i].position(0),(BALL_RADIUS/2.0),gTable.balls[i].position(1));
+		glTranslatef(position(0),(BALL_RADIUS/2.0),position(1));
 		#if DRAW_SOLID
 		glutSolidSphere(gTable.balls[i].radius,32,32);
 		#else
-		glutWireSphere(gTable.balls[i].radius,12,12);
+		glutWireSphere(gTable.balls[i].GetRadius(),12,12);
 		#endif
 		glPopMatrix();
-		glColor3f(0.0,0.0,1.0);
+		//glColor3f(0.0,0.0,1.0);
 	}
 	glColor3f(1.0,1.0,1.0);
 
@@ -164,22 +173,22 @@ void RenderScene(void) {
 	
 	
 
-	for(int i=0;i<gTable.parts.num;i++)
-	{
+	//for(int i=0;i<gTable.parts.num;i++)
+	//{
 
-		GLfloat test = (GLfloat)(rand() % 100) / 100;
-		std::cout << test << std::endl;
-		//glColor3f(1.0, 1.0, 1.0);
-		glColor3f(((GLfloat)(rand() % 100)/100), ((GLfloat)(rand() % 100) / 100), ((GLfloat)(rand() % 100) / 100));
-		glPushMatrix();
-		glTranslatef(gTable.parts.particles[i]->position(0),gTable.parts.particles[i]->position(1),gTable.parts.particles[i]->position(2));
-		#if DRAW_SOLID
-		glutSolidSphere(1.022f,32,32);
-		#else
-		glutWireSphere(1.022f,12,12);
-		#endif
-		glPopMatrix();		
-	}
+	//	GLfloat test = (GLfloat)(rand() % 100) / 100;
+	//	std::cout << test << std::endl;
+	//	//glColor3f(1.0, 1.0, 1.0);
+	//	glColor3f(((GLfloat)(rand() % 100)/100), ((GLfloat)(rand() % 100) / 100), ((GLfloat)(rand() % 100) / 100));
+	//	glPushMatrix();
+	//	glTranslatef(gTable.parts.particles[i]->position(0),gTable.parts.particles[i]->position(1),gTable.parts.particles[i]->position(2));
+	//	#if DRAW_SOLID
+	//	glutSolidSphere(1.022f,32,32);
+	//	#else
+	//	glutWireSphere(1.022f,12,12);
+	//	#endif
+	//	glPopMatrix();		
+	//}
 	/*
 	glBegin(GL_LINE_LOOP);
 	glVertex3f (TABLE_X, 0.0, -TABLE_Z);
@@ -204,12 +213,14 @@ void RenderScene(void) {
 	//draw the cue
 	if(gDoCue)
 	{
+		vec3 position = gTable.balls[0].GetPosition();
+
 		glBegin(GL_LINES);
 		float cuex = sin(gCueAngle) * gCuePower;
 		float cuez = cos(gCueAngle) * gCuePower;
 		glColor3f(1.0,0.0,0.0);
-		glVertex3f (gTable.balls[0].position(0), (BALL_RADIUS/2.0f), gTable.balls[0].position(1));
-		glVertex3f ((gTable.balls[0].position(0)+cuex), (BALL_RADIUS/2.0f), (gTable.balls[0].position(1)+cuez));
+		glVertex3f (position(0), (BALL_RADIUS/2.0f), position(1));
+		glVertex3f ((position(0)+cuex), (BALL_RADIUS/2.0f), (position(1)+cuez));
 		glColor3f(1.0,1.0,1.0);
 		glEnd();
 	}
@@ -282,8 +293,8 @@ void KeyboardFunc(unsigned char key, int x, int y)
 		{
 			if(gDoCue)
 			{
-				vec2 imp(	(-sin(gCueAngle) * gCuePower * gCueBallFactor),
-							(-cos(gCueAngle) * gCuePower * gCueBallFactor));
+				vec3 imp(	(-sin(gCueAngle) * gCuePower * gCueBallFactor),
+							(-cos(gCueAngle) * gCuePower * gCueBallFactor),0);
 				gTable.balls[0].ApplyImpulse(imp);				
 			}
 			break;
