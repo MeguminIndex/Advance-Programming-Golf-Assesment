@@ -2,15 +2,6 @@
 
 
 
-Transform::Transform()
-{
-}
-
-
-Transform::~Transform()
-{
-}
-
 void Transform::SetPosition(vec3 newPos)
 {
 	position = newPos;
@@ -52,4 +43,8 @@ void Transform::Update(int deltaTime)
 	position += ((velocity * deltaTime) / 1000.0f);
 	//set small velocities to zero
 	if (velocity.Magnitude() < velThreshold) velocity = 0.0;
+}
+
+void Transform::ApplyGravity()
+{
 }

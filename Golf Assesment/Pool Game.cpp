@@ -148,7 +148,7 @@ void RenderScene(void) {
 		vec3 position = gTable.balls[i].GetPosition();
 
 		glPushMatrix();
-		glTranslatef(position(0),(BALL_RADIUS/2.0),position(1));
+		glTranslatef(position(0), position(2),position(1));
 		#if DRAW_SOLID
 		glutSolidSphere(gTable.balls[i].radius,32,32);
 		#else
@@ -159,15 +159,23 @@ void RenderScene(void) {
 	}
 	glColor3f(1.0,1.0,1.0);
 
+	
+
 	//draw the table
 	for(int i=0;i<NUM_CUSHIONS;i++)
 	{	
+	/*	vec3 position = gTable.cushions[i].GetPosition();
+
 		glBegin(GL_LINE_LOOP);
-		glVertex3f (gTable.cushions[i].vertices[0](0), 0.0, gTable.cushions[i].vertices[0](1));
-		glVertex3f (gTable.cushions[i].vertices[0](0), 0.1, gTable.cushions[i].vertices[0](1));
-		glVertex3f (gTable.cushions[i].vertices[1](0), 0.1, gTable.cushions[i].vertices[1](1));
-		glVertex3f (gTable.cushions[i].vertices[1](0), 0.0, gTable.cushions[i].vertices[1](1));
-		glEnd();
+		glVertex3f (gTable.cushions[i].vertices[0](0) - position(0), 0.0 - position(2), gTable.cushions[i].vertices[0](1) - position(1));
+		glVertex3f (gTable.cushions[i].vertices[0](0) - position(0), 0.1 - position(2), gTable.cushions[i].vertices[0](1) - position(1));
+		glVertex3f (gTable.cushions[i].vertices[1](0) - position(0), 0.1 - position(2), gTable.cushions[i].vertices[1](1) - position(1));
+		glVertex3f (gTable.cushions[i].vertices[1](0) - position(0), 0.0 - position(2), gTable.cushions[i].vertices[1](1) - position(1));
+		glEnd();*/
+
+
+		gTable.cushions[i].Draw();
+
 	}
 
 	
@@ -294,7 +302,7 @@ void KeyboardFunc(unsigned char key, int x, int y)
 			if(gDoCue)
 			{
 				vec3 imp(	(-sin(gCueAngle) * gCuePower * gCueBallFactor),
-							(-cos(gCueAngle) * gCuePower * gCueBallFactor),0);
+							(-cos(gCueAngle) * gCuePower * gCueBallFactor),0.0f);
 				gTable.balls[0].ApplyImpulse(imp);				
 			}
 			break;
@@ -385,6 +393,12 @@ void KeyboardUpFunc(unsigned char key, int x, int y)
 			gCamZout = false;
 			break;
 		}
+	case('j'):
+	{
+		std::cout << "J pressed" << std::endl;
+		gTable.cushions[0].SetScale(vec3(2));
+		break;
+	}
 	}
 }
 

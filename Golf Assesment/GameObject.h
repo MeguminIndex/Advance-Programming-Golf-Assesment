@@ -16,6 +16,7 @@ private:
 	//for Spheres
 	DrawMode drawMode = DrawMode::Wireframe;
 
+	vec3 scale;
 	
 	float radius = 0.05f;
 
@@ -28,6 +29,7 @@ private:
 	void MakeCentre(void);
 
 	void DrawSphere();
+	void DrawRectangle();
 	void DrawPolygon();
 
 public:
@@ -35,6 +37,7 @@ public:
 	GameObject() {
 		colour = vec3(1.0f, 1.0f, 1.0f);
 		_isSphere = false;
+		scale = vec3(1, 1, 1);
 	}
 
 	vec3	vertices[2];
@@ -49,6 +52,9 @@ public:
 	//radius gte/set
 	void SetRadius(float newRadius) { radius = newRadius; };
 	float GetRadius() { return radius; };
+	
+	void SetScale(vec3 newscale);
+	vec3 GetScale() { return scale; };
 
 	vec3 GetNormal() { return normal; };
 
@@ -66,7 +72,7 @@ public:
 	void HitPlane(GameObject &c);
 	void HitBall(GameObject &b);
 
-
+	bool AABB_CollisionDetection(GameObject other);
 
 	void Draw();//draw object at somepoint
 

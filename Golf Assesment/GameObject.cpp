@@ -34,6 +34,22 @@ void GameObject::DrawSphere()
 
 }
 
+void GameObject::DrawRectangle()
+{
+
+	vec3 position = GetPosition();
+
+	glBegin(GL_LINE_LOOP);
+	glVertex3f(vertices[0](0) - position(0), -vertices[0](2) - position(2), vertices[0](1) - position(1));
+	glVertex3f(vertices[0](0) - position(0), vertices[0](2) - position(2), vertices[0](1) - position(1));
+	glVertex3f(vertices[1](0) - position(0), vertices[1](2) - position(2), vertices[1](1) - position(1));
+	glVertex3f(vertices[1](0) - position(0), -vertices[1](2) - position(2), vertices[1](1) - position(1));
+	glEnd();
+
+
+
+}
+
 void GameObject::DrawPolygon()
 {
 }
@@ -45,7 +61,7 @@ void GameObject::Draw()
 	if (_isSphere)
 		DrawSphere();
 	else
-		DrawPolygon();
+		DrawRectangle();
 }
 
 void GameObject::DoBallCollision(GameObject &b)
@@ -53,9 +69,32 @@ void GameObject::DoBallCollision(GameObject &b)
 	if (HasHitBall(b)) HitBall(b);
 }
 
+void GameObject::SetScale(vec3 newscale)
+{
+
+	//before setting new scale divde verticies by current scale
+	//then multiply by new scale and set new scale value
+
+	int size = sizeof(vertices) / sizeof(*vertices);
+
+	for (int i = 0; i< size; i++)
+	{
+		vertices[i](0) /= scale(0);
+		vertices[i](1) /= scale(1);
+		vertices[i](2) /= scale(2);
+
+		vertices[i](0) *= newscale(0);
+		vertices[i](1) *= newscale(1);
+		vertices[i](2) *= newscale(2);
+	}
+
+	scale = newscale;
+
+}
+
 void GameObject::DoPlaneCollision(GameObject &b)
 {
-	if (HasHitPlane(b)) HitPlane(b);
+	if (AABB_CollisionDetection(b)) HitPlane(b);
 }
 
 void GameObject::UpdateObject(int deltaTime)
@@ -167,5 +206,26 @@ void GameObject::HitBall(GameObject &b)
 	{
 		gTable.parts.AddParticle(pos);
 	}*/
+}
+
+bool GameObject::AABB_CollisionDetection(GameObject other)
+{
+	vec3 thisPos = GetPosition(), thisScale = GetScale();
+	vec3 otherPos = other.GetPosition(), otherScale = GetScale();
+
+	//check the axis
+	if (thisPos(0) < otherPos(0) + otherScale(0) &&
+		thisPos(0) + thisScale(0) > otherPos(0 &&
+		thisPos(1) < otherPos(1) + otherScale(1) &&
+		thisPos(1) + thisScale(1) > otherPos(1) &&
+		thisPos(2) < otherPos(2) + otherScale(2) &&
+		thisPos(2) + thisScale(2) > otherPos(2)))
+	{
+		//std::cout << "Collision Detected" << std::endl;
+
+		return true;
+	}
+
+	return false;
 }
 

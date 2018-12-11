@@ -12,7 +12,7 @@
 #define TWO_PI			(6.2832f)
 #define	SIM_UPDATE_MS	(10)
 #define NUM_BALLS		(7)		
-#define NUM_CUSHIONS	(5)		
+#define NUM_CUSHIONS	(4)		
 #define MAX_PARTICLES	(200)
 
 

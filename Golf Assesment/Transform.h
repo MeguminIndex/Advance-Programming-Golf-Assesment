@@ -7,6 +7,7 @@ class Transform
 private:
 	vec3 position;
 	vec3 velocity;
+	
 
 	float mass = 0.1f;
 	float velThreshold = 0.01;
@@ -16,8 +17,15 @@ private:
 	float gGravityAccn = 9.8f; //gravity
 
 public:
-	Transform();
-	~Transform();
+	Transform()
+	{
+		position = vec3(0.0,0.0,0.0);
+		
+	};
+	~Transform()
+	{
+
+	};
 
 	void SetPosition(vec3 newPos);
 	void SetPosition(float x = 0, float y = 0, float z = 0);
@@ -25,6 +33,9 @@ public:
 
 	void SetVelocity(vec3 newVelocity) { velocity = newVelocity; };
 	vec3 GetVelocity() { return velocity; };
+
+
+
 
 	void SetRestitution(float restitution) { gCoeffRestitution = restitution; };
 	float GetRestitution() { return gCoeffRestitution; };
@@ -47,7 +58,7 @@ public:
 
 	
 
-	
+	void ApplyGravity();
 
 
 };
