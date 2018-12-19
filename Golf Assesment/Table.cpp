@@ -14,6 +14,9 @@ void Table::SetupCushions(void)
 {
 
 	//left wall
+
+//	cushions[0].size = vec3(TABLE_X, TABLE_Z, TABLE_Y);
+
 	cushions[0].vertices[0](0) = -TABLE_X ;
 	cushions[0].vertices[0](1) = -TABLE_Z;
 	cushions[0].vertices[0](2) = TABLE_Y;
@@ -22,6 +25,7 @@ void Table::SetupCushions(void)
 	cushions[0].vertices[1](2) = TABLE_Y;
 
 	//bottom wall
+//	cushions[1].size = vec3(TABLE_X, TABLE_Z, TABLE_Y);
 	cushions[1].vertices[0](0) = -TABLE_X;
 	cushions[1].vertices[0](1) = TABLE_Z;
 	cushions[1].vertices[0](2) = TABLE_Y;
@@ -31,6 +35,7 @@ void Table::SetupCushions(void)
 
 
 	//right wall
+//	cushions[2].size = vec3(TABLE_X, TABLE_Z, TABLE_Y);
 	cushions[2].vertices[0](0) = TABLE_X;
 	cushions[2].vertices[0](1) = TABLE_Z;
 	cushions[2].vertices[0](2) = TABLE_Y;
@@ -38,11 +43,8 @@ void Table::SetupCushions(void)
 	cushions[2].vertices[1](1) = -TABLE_Z;
 	cushions[2].vertices[1](2) = TABLE_Y;
 
-	//cushions[3].vertices[0](0) = TABLE_X;
-	//cushions[3].vertices[0](1) = -TABLE_Z + 0.3;
-	//cushions[3].vertices[1](0) = TABLE_X - 0.3;
-	//cushions[3].vertices[1](1) = -TABLE_Z;
-
+	//top wall
+	//cushions[3].size = vec3(TABLE_X, TABLE_Z, TABLE_Y);
 	cushions[3].vertices[0](0) = TABLE_X;
 	cushions[3].vertices[0](1) = -TABLE_Z;
 	cushions[3].vertices[0](2) = TABLE_Y;
@@ -50,14 +52,26 @@ void Table::SetupCushions(void)
 	cushions[3].vertices[1](1) = -TABLE_Z;
 	cushions[3].vertices[1](2) = TABLE_Y;
 
-	for (int i = 0; i<NUM_CUSHIONS; i++)
+
+	for (int i = 0; i < NUM_CUSHIONS; i++)
 	{
 		//cushions[i].MakeCentre();
 		//cushions[i].MakeNormal();
 		cushions[i].SetUpMesh();
 	}
 
-	cushions[4].SetPosition(0.5, 0, 0);
+	cushions[0].SetScale(vec3(1,2, 1));
+	cushions[0].SetPosition(5, 6.2, TABLE_Y);
+
+	cushions[1].SetPosition(5, 5, TABLE_Y);
+
+	cushions[2].SetScale(vec3(1,2,1));
+	cushions[2].SetPosition(5, 6.2, TABLE_Y);
+
+	cushions[3].SetPosition(5,7.4, TABLE_Y);
+
+	
+
 
 }
 

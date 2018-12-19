@@ -13,6 +13,9 @@ public:
 
 	GolfBall(){
 		index = ballIndexCnt++; Reset();
+		_isSphere = true;
+
+		SetDrawMode(DrawMode::Solid);//sets the golfballs draw mode
 	}
 
 };

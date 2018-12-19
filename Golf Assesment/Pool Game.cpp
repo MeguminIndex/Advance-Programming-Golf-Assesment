@@ -23,11 +23,11 @@ float gCueBallFactor = 8.0;
 bool gDoCue = true;
 
 //camera variables
-vec3 gCamPos(0.0,0.7,2.1);
+vec3 gCamPos(7.0,5.7,13.1);
 vec3 gCamLookAt(0.0,0.0,0.0);
 bool gCamRotate = true;
-float gCamRotSpeed = 0.2;
-float gCamMoveSpeed = 0.5;
+float gCamRotSpeed = 1.6;
+float gCamMoveSpeed = 2.5;
 bool gCamL = false;
 bool gCamR = false;
 bool gCamU = false;
@@ -127,6 +127,9 @@ void DoCamera(int ms)
 		gCamPos -= inc;
 		gCamLookAt -= inc;
 	}
+
+	std::cout << " Cam X: "<< gCamPos(0)<<" Cam Y: " << gCamPos(1)<< " Cam Z: " << gCamPos(2) << std::endl;
+
 }
 
 
@@ -141,21 +144,25 @@ void RenderScene(void) {
 	//glColor3f(1.0,1.0,1.0);
 	for(int i=0;i<NUM_BALLS;i++)
 	{
-		vec3 colour = gTable.balls[i].colour;
+		//vec3 colour = gTable.balls[i].colour;
 
-		glColor3f(colour.elem[0],colour.elem[1],colour.elem[2]);
+		//glColor3f(colour.elem[0],colour.elem[1],colour.elem[2]);
 
-		vec3 position = gTable.balls[i].GetPosition();
+		//vec3 position = gTable.balls[i].GetPosition();
 
-		glPushMatrix();
-		glTranslatef(position(0), position(2),position(1));
-		#if DRAW_SOLID
-		glutSolidSphere(gTable.balls[i].radius,32,32);
-		#else
-		glutWireSphere(gTable.balls[i].GetRadius(),12,12);
-		#endif
-		glPopMatrix();
-		//glColor3f(0.0,0.0,1.0);
+		//glPushMatrix();
+		//glTranslatef(position(0), position(2),position(1));
+		//#if DRAW_SOLID
+		//glutSolidSphere(gTable.balls[i].radius,32,32);
+		//#else
+		//glutWireSphere(gTable.balls[i].GetRadius(),12,12);
+		//#endif
+		//glPopMatrix();
+		////glColor3f(0.0,0.0,1.0);
+
+		gTable.balls[i].Draw();
+
+		
 	}
 	glColor3f(1.0,1.0,1.0);
 
@@ -227,8 +234,8 @@ void RenderScene(void) {
 		float cuex = sin(gCueAngle) * gCuePower;
 		float cuez = cos(gCueAngle) * gCuePower;
 		glColor3f(1.0,0.0,0.0);
-		glVertex3f (position(0), (BALL_RADIUS/2.0f), position(1));
-		glVertex3f ((position(0)+cuex), (BALL_RADIUS/2.0f), (position(1)+cuez));
+		glVertex3f (0-position(0),0 -position(2),0- position(1));
+		glVertex3f (0-(position(0)+cuex),0- position(2),0- (position(1)+cuez));
 		glColor3f(1.0,1.0,1.0);
 		glEnd();
 	}
@@ -478,7 +485,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	glutInitWindowPosition(0,0);
 	glutInitWindowSize(1000,700);
 	//glutFullScreen();
-	glutCreateWindow("MSc Workshop : Pool Game");
+	glutCreateWindow("Advance Programming Golf");
 	#if DRAW_SOLID
 	InitLights();
 	#endif

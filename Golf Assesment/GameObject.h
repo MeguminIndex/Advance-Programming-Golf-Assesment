@@ -14,10 +14,10 @@ class GameObject : public Transform
 
 private:
 	//for Spheres
-	DrawMode drawMode = DrawMode::Wireframe;
+	DrawMode drawMode;
 
 	vec3 scale;
-	
+
 	float radius = 0.05f;
 
 	//for other objects
@@ -27,6 +27,8 @@ private:
 
 	void MakeNormal(void);
 	void MakeCentre(void);
+
+
 
 	void DrawSphere();
 	void DrawRectangle();
@@ -38,10 +40,14 @@ public:
 		colour = vec3(1.0f, 1.0f, 1.0f);
 		_isSphere = false;
 		scale = vec3(1, 1, 1);
+	//	size = vec3(radius/2);
+		drawMode = DrawMode::Wireframe;
 	}
 
 	vec3	vertices[2];
 	vec3 colour;//object colour
+	
+	//vec3 size;
 
 	bool _isSphere = false;
 

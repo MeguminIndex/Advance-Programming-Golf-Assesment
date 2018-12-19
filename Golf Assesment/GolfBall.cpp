@@ -13,7 +13,7 @@ void GolfBall::Reset()
 	if (index == 0)
 	{
 
-		SetPosition(0.0, 0.5, 0.0);
+		SetPosition(5.0, 5.5, 0.0);
 
 		//position(1) = 0.5;
 		//position(0) = 0.0;

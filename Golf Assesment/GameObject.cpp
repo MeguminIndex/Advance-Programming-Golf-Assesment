@@ -18,12 +18,15 @@ void GameObject::MakeCentre(void)
 	centre /= 2.0;
 }
 
+
+
+
 void GameObject::DrawSphere()
 {
 	vec3 pos = GetPosition();
 
 	glPushMatrix();
-	glTranslatef(pos(0), pos(2), pos(1));
+	glTranslatef(0 - pos(0),0- pos(2),0- pos(1));
 	if(drawMode == DrawMode::Solid)
 	glutSolidSphere(GetRadius(), 32, 32);
 	else
@@ -55,7 +58,6 @@ void GameObject::DrawPolygon()
 }
 
 
-
 void GameObject::Draw()
 {
 	if (_isSphere)
@@ -72,12 +74,18 @@ void GameObject::DoBallCollision(GameObject &b)
 void GameObject::SetScale(vec3 newscale)
 {
 
+	//if ( newscale(0) >! 0 || newscale(1) >! 0 || newscale(2) >! 0 )
+	//{
+	//	std::cout << "Call to Set and objects scale was attempted and aborted" << std::endl;
+
+	//}
+
 	//before setting new scale divde verticies by current scale
 	//then multiply by new scale and set new scale value
 
-	int size = sizeof(vertices) / sizeof(*vertices);
+	int n = sizeof(vertices) / sizeof(*vertices);
 
-	for (int i = 0; i< size; i++)
+	for (int i = 0; i < n; i++)
 	{
 		vertices[i](0) /= scale(0);
 		vertices[i](1) /= scale(1);
@@ -105,6 +113,18 @@ void GameObject::UpdateObject(int deltaTime)
 
 bool GameObject::HasHitPlane(GameObject &c) 
 {
+	//vec3 vel = GetVelocity();
+
+	////if moving away from plane, cannot hit
+	//if (vel.Dot(c.GetNormal()) >= 0.0) return false;
+
+	////if in front of plane, then have not hit
+	//vec3 relPos = GetPosition() - c.vertices[0];
+	//double sep = relPos.Dot(c.normal);
+	//if (sep > radius) return false;
+	//return true;
+
+
 
 	vec3 vel = GetVelocity();
 	
@@ -112,10 +132,19 @@ bool GameObject::HasHitPlane(GameObject &c)
 	if (vel.Dot(c.GetNormal()) >= 0.0) return false;
 
 	//if in front of plane, then have not hit
-	vec3 relPos = GetPosition() - c.vertices[0];
+
+
+	vec3 relPos = (vec3(0, 0, 0) - GetPosition()) - (c.vertices[0] - c.GetPosition());
 	double sep = relPos.Dot(c.normal);
 	if (sep > radius) return false;
+
+
+
 	return true;
+
+
+
+
 }
 
 bool GameObject::HasHitBall(GameObject &b) 
@@ -210,22 +239,61 @@ void GameObject::HitBall(GameObject &b)
 
 bool GameObject::AABB_CollisionDetection(GameObject other)
 {
-	vec3 thisPos = GetPosition(), thisScale = GetScale();
-	vec3 otherPos = other.GetPosition(), otherScale = GetScale();
+	vec3 size = other.vertices[0] - other.vertices[1];
+	size = size.Abs();
 
-	//check the axis
-	if (thisPos(0) < otherPos(0) + otherScale(0) &&
-		thisPos(0) + thisScale(0) > otherPos(0 &&
-		thisPos(1) < otherPos(1) + otherScale(1) &&
-		thisPos(1) + thisScale(1) > otherPos(1) &&
-		thisPos(2) < otherPos(2) + otherScale(2) &&
-		thisPos(2) + thisScale(2) > otherPos(2)))
+
+	vec3 thisPos = vec3(0, 0, 0) - GetPosition(), thisScale = GetScale();
+	vec3 otherPos = other.vertices[0] - other.GetPosition(), otherScale = other.GetScale();
+
+
+
+	float thisRight, thisBottom;
+	float bottomOther, rightOther;
+
+	thisRight = thisPos(0) + radius;
+
+	thisBottom = thisPos(1) + radius;
+
+	rightOther = otherPos(0) + size(0);
+
+	bottomOther = otherPos(1) + size(1);
+
+
+	//if state ments return false when this sprite is otside the rect of the sprite being checked against
+	if (thisBottom <= otherPos(1) - size(1))
 	{
-		//std::cout << "Collision Detected" << std::endl;
-
-		return true;
+		return false;//if bottom of this is above the top of the other sprite
 	}
 
-	return false;
+
+	if (thisPos(1) - radius >= bottomOther)
+	{
+		return false;// if top of this is below the bottom of the other sprite
+	}
+
+	if (thisRight <= otherPos(0) - size(0))
+	{
+		return false;//if the right side of this is left of the other sprites left side
+	}
+
+
+	if (thisPos(0) - radius >= rightOther)
+	{
+		return false;//if this sprite is right of the righ side othe the other sprite
+	}
+
+
+	//gets here if all of the statements are false
+
+	return true;// returns true signifying collision has happened
+
+
+
+
+
+
+
+
 }
 

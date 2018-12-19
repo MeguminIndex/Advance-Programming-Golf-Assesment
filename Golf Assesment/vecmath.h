@@ -5,6 +5,7 @@
 #define vecmat_h_included
 
 #include <math.h>
+#include "stdafx.h"
 
 /*------------------------------------------------------------------------
 	vec2 : 2d Vector
@@ -39,6 +40,8 @@ public:
     vec2 Normalised(void) const {vec2 res(*this); res.Normalise(); return res;}
 
     double Dot(const vec2 &x) const {return ( (elem[0]*x.elem[0]) + (elem[1]*x.elem[1]) );}
+
+
 };
 
 /*------------------------------------------------------------------------
@@ -80,6 +83,34 @@ public:
     	res.elem[2] = elem[0]*x.elem[1] - elem[1]*x.elem[0];
 		return res;
     }
+
+
+	vec3 Abs()
+	{
+		return vec3(fabs(elem[0]), fabs(elem[1]), fabs(elem[2]));
+	};
+
+
+	vec3 Clamp(vec3 lb, vec3 up)
+	{
+		vec3 returnedVec;
+
+		returnedVec(0) = std::fmin(std::fmax(elem[0], lb(0)), up(0));
+		returnedVec(1) = std::fmin(std::fmax(elem[1], lb(1)), up(1));
+		returnedVec(2) = std::fmin(std::fmax(elem[2], lb (2)), up(2));
+
+		return returnedVec;
+	}
+
+	//my clamp
+
+	//vec3 Clamp(vec3 vec, vec3 min,vec3 max)
+	//{
+	//	return min(max(vec, min), max);
+
+	//}
+
+
 };
 
 #endif
