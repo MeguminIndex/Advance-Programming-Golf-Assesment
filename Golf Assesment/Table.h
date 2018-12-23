@@ -14,7 +14,7 @@
 #define TWO_PI			(6.2832f)
 #define	SIM_UPDATE_MS	(10)
 #define NUM_BALLS		(1)		
-#define NUM_CUSHIONS	(3)		
+#define NUM_CUSHIONS	(6)		
 #define MAX_PARTICLES	(200)
 
 
@@ -37,6 +37,7 @@ public:
 	void Update(int ms);
 	bool AnyBallsMoving(void);
 	
+	void SetupSceneOne();
 
 };
 
