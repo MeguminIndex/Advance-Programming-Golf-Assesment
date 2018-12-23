@@ -9,6 +9,10 @@
 #include"simulation.h"
 #include"Table.h"
 
+
+int playersID = 0;;
+
+
 Table gTable;
 
 //cue variables
@@ -23,8 +27,8 @@ float gCueBallFactor = 8.0;
 bool gDoCue = true;
 
 //camera variables
-vec3 gCamPos(7.0,5.7,13.1);
-vec3 gCamLookAt(0.0,0.0,0.0);
+vec3 gCamPos(2.0,4.0,1.9);
+vec3 gCamLookAt(-2.0, 0.5, 0.3);
 bool gCamRotate = true;
 float gCamRotSpeed = 1.6;
 float gCamMoveSpeed = 2.5;
@@ -35,12 +39,31 @@ bool gCamD = false;
 bool gCamZin = false;
 bool gCamZout = false;
 
+// angle of rotation for the camera direction
+float angle = 0.0f;
+
+// actual vector representing the camera's direction
+float lx = 0.0f, lz = -1.0f;
+
+// XZ position of the camera
+float x = 0.0f, z = 5.0f;
+
+// the key states. These variables will be zero
+//when no key is being presses
+float deltaAngle = 0.0f;
+float deltaMove = 0;
+int xOrigin = -1;
+
+
+
 //rendering options
 #define DRAW_SOLID	(0)
 
 void DoCamera(int ms)
 {
 	static const vec3 up(0.0,1.0,0.0);
+
+
 
 	if(gCamRotate)
 	{
@@ -129,16 +152,46 @@ void DoCamera(int ms)
 	}
 
 	std::cout << " Cam X: "<< gCamPos(0)<<" Cam Y: " << gCamPos(1)<< " Cam Z: " << gCamPos(2) << std::endl;
-
+	std::cout << " Cam Look X: " << gCamLookAt(0) << " Cam Look Y: " << gCamLookAt(1) << " Cam Look Z: " << gCamLookAt(2) << std::endl;
 }
 
+
+void computePos(float deltaMove) {
+
+	x += deltaMove * lx * 0.1f;
+	z += deltaMove * lz * 0.1f;
+}
 
 void RenderScene(void) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	//set camera
 	glLoadIdentity();
-	gluLookAt(gCamPos(0),gCamPos(1),gCamPos(2),gCamLookAt(0),gCamLookAt(1),gCamLookAt(2),0.0f,1.0f,0.0f);
+
+	vec3 ballPos = gTable.balls[playersID].GetPosition();
+
+	/*gluLookAt(ballPos(1), ballPos(2) + 2,ballPos(0),
+ (ballPos(1) + 0.0f) + gCamLookAt(0), (ballPos(2) + -0.0f) + gCamLookAt(1), ballPos(0) + gCamLookAt(2),0.0f,1.0f,0.0f);
+*/
+
+	if (deltaMove)
+		computePos(deltaMove);
+
+	// Set the camera
+	gluLookAt(x, 1.0f, z,
+		x + lx, 1.0f, z + lz,
+		0.0f, 1.0f, 0.0f);
+
+
+	// Draw ground
+	glColor3f(0.1f, 0.1f, 0.1f);
+	glBegin(GL_QUADS);
+	glVertex3f(-100.0f, -1.10f,-100.0f);
+	glVertex3f(-100.0f, -1.10f, 100.0f);
+	glVertex3f( 100.0f, -1.10f, 100.0f);
+	glVertex3f( 100.0f, -1.10f,-100.0f);
+	glEnd();
+
 
 	//draw the ball
 	//glColor3f(1.0,1.0,1.0);
@@ -304,6 +357,10 @@ void KeyboardFunc(unsigned char key, int x, int y)
 {
 	switch(key)
 	{
+	case ('w'): deltaMove = 0.5f; break;
+	case ('s'): deltaMove = -0.5f; break;
+
+
 	case(13):
 		{
 			if(gDoCue)
@@ -327,36 +384,36 @@ void KeyboardFunc(unsigned char key, int x, int y)
 			gCamRotate = false;
 			break;
 		}
-	case('z'):
-		{
-			gCamL = true;
-			break;
-		}
-	case('c'):
-		{
-			gCamR = true;
-			break;
-		}
-	case('s'):
-		{
-			gCamU = true;
-			break;
-		}
-	case('x'):
-		{
-			gCamD = true;
-			break;
-		}
-	case('f'):
-		{
-			gCamZin = true;
-			break;
-		}
-	case('v'):
-		{
-			gCamZout = true;
-			break;
-		}
+	//case('z'):
+	//	{
+	//		gCamL = true;
+	//		break;
+	//	}
+	//case('c'):
+	//	{
+	//		gCamR = true;
+	//		break;
+	//	}
+	//case('s'):
+	//	{
+	//		gCamU = true;
+	//		break;
+	//	}
+	//case('x'):
+	//	{
+	//		gCamD = true;
+	//		break;
+	//	}
+	//case('f'):
+	//	{
+	//		gCamZin = true;
+	//		break;
+	//	}
+	//case('v'):
+	//	{
+	//		gCamZout = true;
+	//		break;
+	//	}
 	}
 
 }
@@ -365,41 +422,45 @@ void KeyboardUpFunc(unsigned char key, int x, int y)
 {
 	switch(key)
 	{
-	case(32):
-		{
-			gCamRotate = true;
-			break;
-		}
-	case('z'):
-		{
-			gCamL = false;
-			break;
-		}
-	case('c'):
-		{
-			gCamR = false;
-			break;
-		}
-	case('s'):
-		{
-			gCamU = false;
-			break;
-		}
-	case('x'):
-		{
-			gCamD = false;
-			break;
-		}
-	case('f'):
-		{
-			gCamZin = false;
-			break;
-		}
-	case('v'):
-		{
-			gCamZout = false;
-			break;
-		}
+	case ('w'):
+	case ('s'): deltaMove = 0; break;
+
+
+	//case(32):
+	//	{
+	//		gCamRotate = true;
+	//		break;
+	//	}
+	//case('z'):
+	//	{
+	//		gCamL = false;
+	//		break;
+	//	}
+	//case('c'):
+	//	{
+	//		gCamR = false;
+	//		break;
+	//	}
+	//case('s'):
+	//	{
+	//		gCamU = false;
+	//		break;
+	//	}
+	//case('x'):
+	//	{
+	//		gCamD = false;
+	//		break;
+	//	}
+	//case('f'):
+	//	{
+	//		gCamZin = false;
+	//		break;
+	//	}
+	//case('v'):
+	//	{
+	//		gCamZout = false;
+	//		break;
+	//	}
 	case('j'):
 	{
 		std::cout << "J pressed" << std::endl;
@@ -408,6 +469,41 @@ void KeyboardUpFunc(unsigned char key, int x, int y)
 	}
 	}
 }
+
+
+
+
+void MouseButton(int button, int state, int x, int y) {
+
+	// only start motion if the left button is pressed
+	if (button == GLUT_LEFT_BUTTON) {
+
+		// when the button is released
+		if (state == GLUT_UP) {
+			angle += deltaAngle;
+			xOrigin = -1;
+		}
+		else {// state = GLUT_DOWN
+			xOrigin = x;
+		}
+	}
+}
+
+void mouseMove(int x, int y) {
+
+	// this will only be true when the left button is down
+	if (xOrigin >= 0) {
+
+		// update deltaAngle
+		deltaAngle = (x - xOrigin) * 0.001f;
+
+		// update camera's direction
+		lx = sin(angle + deltaAngle);
+		lz = -cos(angle + deltaAngle);
+	}
+}
+
+
 
 void ChangeSize(int w, int h) {
 
@@ -494,11 +590,25 @@ int _tmain(int argc, _TCHAR* argv[])
 	glutReshapeFunc(ChangeSize);
 	glutIdleFunc(RenderScene);
 	
+	
+
+
+
+	//gCamLookAt = vec3(-9.0, 1.0, -8.0);
+
 	glutIgnoreKeyRepeat(1);
 	glutKeyboardFunc(KeyboardFunc);
 	glutKeyboardUpFunc(KeyboardUpFunc);
 	glutSpecialFunc(SpecKeyboardFunc);
 	glutSpecialUpFunc(SpecKeyboardUpFunc);
+
+	glutMouseFunc(MouseButton);
+	glutMotionFunc(mouseMove);
+
 	glEnable(GL_DEPTH_TEST);
 	glutMainLoop();
+
+
+
+
 }

@@ -82,7 +82,7 @@ void Table::Update(int ms)
 	{
 		for (int j = 0; j<NUM_CUSHIONS; j++)
 		{
-			balls[i].DoPlaneCollision(cushions[j]);
+			balls[i].DoPlaneCollision(cushions[j],ms);
 		}
 
 		for (int j = (i + 1); j<NUM_BALLS; j++)

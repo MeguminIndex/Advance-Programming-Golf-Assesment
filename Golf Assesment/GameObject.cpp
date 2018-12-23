@@ -24,7 +24,7 @@ void GameObject::MakeCentre(void)
 void GameObject::DrawSphere()
 {
 	vec3 pos = GetPosition();
-
+	
 	glPushMatrix();
 	glTranslatef(0 - pos(0),0- pos(2),0- pos(1));
 	if(drawMode == DrawMode::Solid)
@@ -43,10 +43,10 @@ void GameObject::DrawRectangle()
 	vec3 position = GetPosition();
 
 	glBegin(GL_LINE_LOOP);
-	glVertex3f(vertices[0](0) - position(0), -vertices[0](2) - position(2), vertices[0](1) - position(1));
-	glVertex3f(vertices[0](0) - position(0), vertices[0](2) - position(2), vertices[0](1) - position(1));
-	glVertex3f(vertices[1](0) - position(0), vertices[1](2) - position(2), vertices[1](1) - position(1));
-	glVertex3f(vertices[1](0) - position(0), -vertices[1](2) - position(2), vertices[1](1) - position(1));
+	glVertex3f(vertices[0](0) - position(0), -vertices[0](2) +0.10f - position(2), vertices[0](1) - position(1));
+	glVertex3f(vertices[0](0) - position(0), vertices[0](2) + 0.10f - position(2), vertices[0](1) - position(1));
+	glVertex3f(vertices[1](0) - position(0), vertices[1](2) + 0.10f - position(2), vertices[1](1) - position(1));
+	glVertex3f(vertices[1](0) - position(0), -vertices[1](2) + 0.10f - position(2), vertices[1](1) - position(1));
 	glEnd();
 
 
@@ -60,6 +60,8 @@ void GameObject::DrawPolygon()
 
 void GameObject::Draw()
 {
+	glColor3f(colour.elem[0], colour.elem[1], colour.elem[2]);
+
 	if (_isSphere)
 		DrawSphere();
 	else
@@ -100,9 +102,9 @@ void GameObject::SetScale(vec3 newscale)
 
 }
 
-void GameObject::DoPlaneCollision(GameObject &b)
+void GameObject::DoPlaneCollision(GameObject &b, float dT)
 {
-	if (AABB_CollisionDetection(b)) HitPlane(b);
+	if (AABB_CollisionDetection(b)) HitPlane(b,dT);
 }
 
 void GameObject::UpdateObject(int deltaTime)
@@ -164,9 +166,12 @@ bool GameObject::HasHitBall(GameObject &b)
 	return true;
 }
 
-void GameObject::HitPlane(GameObject &c)
+void GameObject::HitPlane(GameObject &c, float dT)
 {
-	//reverse velocity component perpendicular to plane  
+	//reverse velocity component perpendicular to plane 
+
+	vec3 oldVel = GetVelocity();
+
 	double comp = GetVelocity().Dot(c.normal) * (1.0 + GetRestitution());
 	vec3 delta = vec3(0,0,0) -(c.normal * comp);
 	SetVelocity(GetVelocity() + delta);
@@ -174,6 +179,11 @@ void GameObject::HitPlane(GameObject &c)
 	//make some particles
 	int n = (rand() % 4) + 3;
 
+
+
+	vec3 position = GetPosition() +  ((vec3(0,0,0) - oldVel * dT) / 1000.0f); //hacky and will be buggy at lower frame rates
+
+	SetPosition(position);
 
 	//vec3 pos = GetPosition();
 	//vec3 oset(c.normal(0), 0.0, c.normal(1));
@@ -239,6 +249,8 @@ void GameObject::HitBall(GameObject &b)
 
 bool GameObject::AABB_CollisionDetection(GameObject other)
 {
+	
+	
 	vec3 size = other.vertices[0] - other.vertices[1];
 	size = size.Abs();
 

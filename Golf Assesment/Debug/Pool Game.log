@@ -1,11 +1,3 @@
-﻿  Pool Game.cpp
-i:\university\mcomp\adv programming\advance-programming-golf-assesment\golf assesment\table.h(16): warning C4005: 'NUM_BALLS': macro redefinition
-  i:\university\mcomp\adv programming\advance-programming-golf-assesment\golf assesment\simulation.h(19): note: see previous definition of 'NUM_BALLS'
-i:\university\mcomp\adv programming\advance-programming-golf-assesment\golf assesment\table.h(17): warning C4005: 'NUM_CUSHIONS': macro redefinition
-  i:\university\mcomp\adv programming\advance-programming-golf-assesment\golf assesment\simulation.h(20): note: see previous definition of 'NUM_CUSHIONS'
-  Generating Code...
-  Compiling...
-  Table.cpp
+﻿  GameObject.cpp
 i:\university\mcomp\adv programming\advance-programming-golf-assesment\golf assesment\transform.h(13): warning C4305: 'initializing': truncation from 'double' to 'float'
-  Generating Code...
   Pool Game.vcxproj -> I:\University\Mcomp\Adv Programming\Advance-Programming-Golf-Assesment\Golf Assesment\Debug\Pool Game.exe

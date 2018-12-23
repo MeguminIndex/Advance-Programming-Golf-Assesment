@@ -68,14 +68,14 @@ public:
 
 
 
-	void DoPlaneCollision(GameObject &c);
+	void DoPlaneCollision(GameObject &c, float dT);
 	void DoBallCollision(GameObject &b);
 	void UpdateObject(int deltaTime);
 
 	bool HasHitPlane(GameObject &c);
 	bool HasHitBall(GameObject &b);
 
-	void HitPlane(GameObject &c);
+	void HitPlane(GameObject &c, float dT);
 	void HitBall(GameObject &b);
 
 	bool AABB_CollisionDetection(GameObject other);
