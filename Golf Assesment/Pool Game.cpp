@@ -13,6 +13,10 @@
 int playersID = 0;;
 
 
+int strokes = 0;
+
+
+
 Table gTable;
 
 //cue variables
@@ -43,10 +47,10 @@ bool gCamZout = false;
 float angle = 0.0f;
 
 // actual vector representing the camera's direction
-float lx = 0.0f, lz = -1.0f;
+float lx = 0.0f, lz = -1.0f, ly =0.0f;
 
 // XZ position of the camera
-float x = 0.0f, z = 5.0f;
+float x = 0.0f, z = 5.0f, y = 1.0f;
 
 // the key states. These variables will be zero
 //when no key is being presses
@@ -162,7 +166,28 @@ void computePos(float deltaMove) {
 	z += deltaMove * lz * 0.1f;
 }
 
+
+
+void drawBitmapText(char* string, float x, float y, float z, float r = 1, float g =1, float b = 1)
+{
+	int j = strlen(string);
+
+	glRasterPos3f(x, y, z);
+	glColor3f(r, g, b);
+	for (int i = 0; i < j; i++) {
+		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, string[i]);
+	}
+
+
+	
+
+}
+
+
+
+
 void RenderScene(void) {
+	glEnable(GL_DEPTH_TEST);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	//set camera
@@ -178,8 +203,8 @@ void RenderScene(void) {
 		computePos(deltaMove);
 
 	// Set the camera
-	gluLookAt(x, 1.0f, z,
-		x + lx, 1.0f, z + lz,
+	gluLookAt(x, y, z,
+		x + lx, y, z + lz,
 		0.0f, 1.0f, 0.0f);
 
 
@@ -295,6 +320,40 @@ void RenderScene(void) {
 
 	//glPopMatrix();
 
+
+	//UI
+
+	//unsigned char string[] = "The quick god jumps over the lazy brown fox.";
+	//float w;
+	//w = glutBitmapLength(GLUT_BITMAP_8_BY_13, string);
+
+	//glRasterPos2f(0., 0.);
+
+	//float x = .5; /* Centre in the middle of the window */
+	//glRasterPos2f(x - (float)w / 2, 0.);
+
+	//glColor3f(1.0, 0.0, 0.0);
+
+	//int len = strlen(string);
+	//for (i = 0; i < len; i++) {
+	//	glutBitmapCharacter(GLUT_BITMAP_8_BY_13, *string);
+	//}
+
+
+	glDisable(GL_DEPTH_TEST);
+
+	
+
+	//Texte(0, 12, "Hey !");
+	//drawGuiBackground();
+
+	char buffer[20];
+
+	sprintf(buffer,"Strokes: %d", strokes);
+	//string mystring = std::to_string(strokes);
+
+	drawBitmapText(buffer, x+lx, y+0.25f, z +lz, 0, 1, 0);
+
 	glFlush();
 	glutSwapBuffers();
 }
@@ -365,6 +424,8 @@ void KeyboardFunc(unsigned char key, int x, int y)
 		{
 			if(gDoCue)
 			{
+				strokes += 1;
+
 				vec3 imp(	(-sin(gCueAngle) * gCuePower * gCueBallFactor),
 							(-cos(gCueAngle) * gCuePower * gCueBallFactor),0.0f);
 				gTable.balls[0].ApplyImpulse(imp);				
@@ -376,6 +437,8 @@ void KeyboardFunc(unsigned char key, int x, int y)
 			for(int i=0;i<NUM_BALLS;i++)
 			{
 				gTable.balls[i].Reset();
+
+				
 			}
 			break;
 		}
@@ -564,7 +627,7 @@ void UpdateScene(int ms)
 		if(gCuePower < gCuePowerMin) gCuePower = gCuePowerMin;
 	}
 
-	DoCamera(ms);
+	//DoCamera(ms);
 
 	gTable.Update(ms);
 

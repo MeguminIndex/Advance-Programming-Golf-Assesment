@@ -1,3 +1,14 @@
 ﻿  Table.cpp
 i:\university\mcomp\adv programming\advance-programming-golf-assesment\golf assesment\transform.h(13): warning C4305: 'initializing': truncation from 'double' to 'float'
+  Generating Code...
+  Compiling...
+  Pool Game.cpp
+i:\university\mcomp\adv programming\advance-programming-golf-assesment\golf assesment\table.h(16): warning C4005: 'NUM_BALLS': macro redefinition
+  i:\university\mcomp\adv programming\advance-programming-golf-assesment\golf assesment\simulation.h(19): note: see previous definition of 'NUM_BALLS'
+i:\university\mcomp\adv programming\advance-programming-golf-assesment\golf assesment\table.h(17): warning C4005: 'NUM_CUSHIONS': macro redefinition
+  i:\university\mcomp\adv programming\advance-programming-golf-assesment\golf assesment\simulation.h(20): note: see previous definition of 'NUM_CUSHIONS'
+i:\university\mcomp\adv programming\advance-programming-golf-assesment\golf assesment\pool game.cpp(352): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1769): note: see declaration of 'sprintf'
+  Generating Code...
+GameObject.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/SAFESEH' specification
   Pool Game.vcxproj -> I:\University\Mcomp\Adv Programming\Advance-Programming-Golf-Assesment\Golf Assesment\Debug\Pool Game.exe
