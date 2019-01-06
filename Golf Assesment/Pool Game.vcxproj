@@ -93,19 +93,23 @@
     <ClCompile Include="GolfBall.cpp" />
     <ClCompile Include="GolfHole.cpp" />
     <ClCompile Include="Pool Game.cpp" />
+    <ClCompile Include="GolfServer.cpp" />
     <ClCompile Include="simulation.cpp" />
     <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="Table.cpp" />
+    <ClCompile Include="Course.cpp" />
+    <ClCompile Include="ThreadedServer.cpp" />
     <ClCompile Include="Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GolfBall.h" />
     <ClInclude Include="GolfHole.h" />
+    <ClInclude Include="GolfServer.h" />
     <ClInclude Include="simulation.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="Table.h" />
+    <ClInclude Include="Course.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="ThreadPool.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="vecmath.h" />
   </ItemGroup>

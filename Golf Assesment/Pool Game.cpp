@@ -7,7 +7,7 @@
 #include<math.h>
 
 #include"simulation.h"
-#include"Table.h"
+#include"Course.h"
 
 
 int playersID = 0;;
@@ -17,7 +17,7 @@ int strokes = 0;
 
 
 
-Table gTable;
+Course gTable;
 
 //cue variables
 float gCueAngle = 0.0;
@@ -222,26 +222,18 @@ void RenderScene(void) {
 	//glColor3f(1.0,1.0,1.0);
 	for(int i=0;i<NUM_BALLS;i++)
 	{
-		//vec3 colour = gTable.balls[i].colour;
 
-		//glColor3f(colour.elem[0],colour.elem[1],colour.elem[2]);
-
-		//vec3 position = gTable.balls[i].GetPosition();
-
-		//glPushMatrix();
-		//glTranslatef(position(0), position(2),position(1));
-		//#if DRAW_SOLID
-		//glutSolidSphere(gTable.balls[i].radius,32,32);
-		//#else
-		//glutWireSphere(gTable.balls[i].GetRadius(),12,12);
-		//#endif
-		//glPopMatrix();
-		////glColor3f(0.0,0.0,1.0);
-
-		gTable.balls[i].Draw();
-
-		
+		gTable.balls[i].Draw();	
 	}
+
+
+	for (int i = 0; i<NUM_HOLES; i++)
+	{
+
+		gTable.holes[i].Draw();
+	}
+
+
 	glColor3f(1.0,1.0,1.0);
 
 	

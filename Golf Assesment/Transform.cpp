@@ -49,6 +49,24 @@ void Transform::Update(int deltaTime)
 
 }
 
+
+void Transform::UpdateNetworked(int deltaTime, vec3 lastPos, vec3 lastVel)
+{
+	position = lastPos;
+	velocity = lastVel;
+
+	//apply friction
+	ApplyFrictionForce(deltaTime);
+	//integrate position
+	position += ((velocity * deltaTime) / 1000.0f);
+	//set small velocities to zero
+	if (velocity.Magnitude() < velThreshold) velocity = 0.0;
+
+	std::cout << "X: " << position(0) << "Z: " << position(1) << std::endl;
+
+}
+
+
 void Transform::ApplyGravity()
 {
 }

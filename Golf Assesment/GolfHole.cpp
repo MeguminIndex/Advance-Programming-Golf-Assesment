@@ -2,13 +2,4 @@
 
 
 
-GolfHole::GolfHole()
-{
 
-
-}
-
-
-GolfHole::~GolfHole()
-{
-}

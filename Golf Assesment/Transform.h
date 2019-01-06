@@ -56,6 +56,7 @@ public:
 
 	void Update(int deltaTime);
 
+	void UpdateNetworked(int deltaTime, vec3 lastPos, vec3 lastVel);
 	
 
 	void ApplyGravity();

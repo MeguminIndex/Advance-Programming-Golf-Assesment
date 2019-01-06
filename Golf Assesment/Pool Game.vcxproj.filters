@@ -33,10 +33,16 @@
     <ClCompile Include="Transform.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Table.cpp">
+    <ClCompile Include="GolfHole.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GolfHole.cpp">
+    <ClCompile Include="Course.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ThreadedServer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GolfServer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -62,10 +68,16 @@
     <ClInclude Include="Transform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Table.h">
+    <ClInclude Include="GolfHole.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GolfHole.h">
+    <ClInclude Include="Course.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ThreadPool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GolfServer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

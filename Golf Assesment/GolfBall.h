@@ -6,7 +6,7 @@ class GolfBall : public GameObject
 
 public:
 
-
+	int ballID;
 
 	int index;
 	void Reset();

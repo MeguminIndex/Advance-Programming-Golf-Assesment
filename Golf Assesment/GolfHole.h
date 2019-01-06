@@ -9,8 +9,17 @@ class GolfHole : public GameObject
 
 
 public:
-	GolfHole();
-	~GolfHole();
+	GolfHole()
+	{
+		_isSphere = true;
+		SetDrawMode(DrawMode::Solid);
+		colour = vec3(1,1,0.6);
+	};
+	~GolfHole()
+	{
+
+	};
+
 
 
 

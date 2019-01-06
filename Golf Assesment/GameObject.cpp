@@ -210,6 +210,8 @@ void GameObject::HitPlane(GameObject &c, float dT)
 
 void GameObject::HitBall(GameObject &b)
 {
+	
+
 	//find direction from other ball to this ball
 	vec3 relDir = (GetPosition() - b.GetPosition()).Normalised();
 
