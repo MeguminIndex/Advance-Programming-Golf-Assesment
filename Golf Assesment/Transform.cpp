@@ -45,7 +45,7 @@ void Transform::Update(int deltaTime)
 	//set small velocities to zero
 	if (velocity.Magnitude() < velThreshold) velocity = 0.0;
 
-	std::cout << "X: " << position(0) << "Z: " <<  position(1) <<std::endl;
+	//std::cout << "X: " << position(0) << "Z: " <<  position(1) <<std::endl;
 
 }
 

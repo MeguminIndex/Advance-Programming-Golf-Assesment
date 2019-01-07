@@ -41,12 +41,13 @@ public:
 		_isSphere = false;
 		scale = vec3(1, 1, 1);
 	//	size = vec3(radius/2);
+		d_Size = vec3(1);
 		drawMode = DrawMode::Wireframe;
 	}
 
 	vec3	vertices[2];
 	vec3 colour;//object colour
-	
+	vec3	d_Size;
 	//vec3 size;
 
 	bool _isSphere = false;

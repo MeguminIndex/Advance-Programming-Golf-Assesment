@@ -24,25 +24,30 @@ public:
 	Course();
 	~Course();
 
-	
+	int currentHole = -1;
 
-	//ball balls[NUM_BALLS];]
+	//a dictionary of player balls which can be acces by player ID ~ thinking ahead for multiplayer as each pc will be assigned a unique ID
 	std::map<int, GolfBall> playerBalls;
 
-	GolfBall balls[NUM_BALLS];
-	//cushion cushions[NUM_CUSHIONS];
-	GameObject cushions[NUM_CUSHIONS];
+	GameObject cWalls[NUM_CUSHIONS];
 
 	GolfHole holes[NUM_HOLES];
+	vec3 holeStartPos[NUM_HOLES];
 
-//	particleSet parts;
-
-	void SetupCushions(void);
+	void SetupCourse(void);
 	void Update(int ms, int playersID);
 	void Update(int ms);
 	bool AnyBallsMoving(void);
 	
-	void SetupSceneOne();
+
+	void SetupCourseTwo();
+
+
+private:
+
+	bool HoleFinished();
+	void NextHole();
+
 
 };
 

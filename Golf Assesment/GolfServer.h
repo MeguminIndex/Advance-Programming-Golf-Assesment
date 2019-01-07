@@ -3,25 +3,25 @@
 #include "GolfBall.h"
 
 
-#include <windows.h>
-#include <winsock2.h>
-
-class GolfServer
-{
-public:
-	GolfServer();
-	~GolfServer();
-
-	
-	std::map<int, SOCKET> playerID;
-
-
-
-
-
-
-
-
-
-};
+//#include <windows.h>
+//#include <winsock2.h>
+//
+//class GolfServer
+//{
+//public:
+//	GolfServer();
+//	~GolfServer();
+//
+//	
+//	std::map<int, SOCKET> playerID;
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//};
 

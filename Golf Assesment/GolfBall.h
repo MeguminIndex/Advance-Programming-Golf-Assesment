@@ -8,12 +8,17 @@ public:
 
 	int ballID;
 
+
+	bool finishedCurrentHole;
+	vec3 lastPos;
+
 	int index;
 	void Reset();
 
 	GolfBall(){
 		index = ballIndexCnt++; Reset();
 		_isSphere = true;
+		finishedCurrentHole = false;
 
 		SetDrawMode(DrawMode::Solid);//sets the golfballs draw mode
 	}

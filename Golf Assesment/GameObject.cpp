@@ -49,8 +49,17 @@ void GameObject::DrawRectangle()
 	glVertex3f(vertices[1](0) - position(0), -vertices[1](2) + 0.10f - position(2), vertices[1](1) - position(1));
 	glEnd();
 
+	//vec3 size = vertices[0] - vertices[1];
+	//size = size.Abs();
 
+	//size = d_Size /2;
 
+	//glBegin(GL_LINE_LOOP);
+	//glVertex3f(position(0) - size(0), position(2) - 0.10f, position(1) - size(2));
+	//glVertex3f(position(0) + size(0), position(2) - 0.10f, position(1) + size(2));
+	//glVertex3f(position(0) + size(0), position(2) + 0.10f, position(1) + size(2));
+	//glVertex3f(position(0) - size(0), position(2) + 0.10f, position(1) - size(2));
+	//glEnd();
 }
 
 void GameObject::DrawPolygon()
@@ -254,13 +263,28 @@ bool GameObject::AABB_CollisionDetection(GameObject other)
 	
 	
 	vec3 size = other.vertices[0] - other.vertices[1];
+	//size /= 2;
 	size = size.Abs();
+	
+	//size = other.d_Size /2;
 
+
+	//thisRight = modelMatrix[3].x + sizeH;
+
+	//thisBottom = modelMatrix[3].y + sizeH;
+
+	//rightOther = otherX + otherWidth;
+
+	//bottomOther = otherY + otherHeight;
 
 	vec3 thisPos = vec3(0, 0, 0) - GetPosition(), thisScale = GetScale();
 	vec3 otherPos = other.vertices[0] - other.GetPosition(), otherScale = other.GetScale();
 
+	//vec3 thisPos = GetPosition();
+	//vec3 otherPos = other.GetPosition();
 
+
+	
 
 	float thisRight, thisBottom;
 	float bottomOther, rightOther;
@@ -274,27 +298,27 @@ bool GameObject::AABB_CollisionDetection(GameObject other)
 	bottomOther = otherPos(1) + size(1);
 
 
-	//if state ments return false when this sprite is otside the rect of the sprite being checked against
+	//if statement return false when this object is otside the rect of the bounding box being checked against
 	if (thisBottom <= otherPos(1) - size(1))
 	{
-		return false;//if bottom of this is above the top of the other sprite
+		return false;//if bottom of this is above the top of the other bounding box
 	}
 
 
 	if (thisPos(1) - radius >= bottomOther)
 	{
-		return false;// if top of this is below the bottom of the other sprite
+		return false;// if top of this is below the bottom of the other bounding box
 	}
 
 	if (thisRight <= otherPos(0) - size(0))
 	{
-		return false;//if the right side of this is left of the other sprites left side
+		return false;//if the right side of this is left of the other bounding box left side
 	}
 
 
 	if (thisPos(0) - radius >= rightOther)
 	{
-		return false;//if this sprite is right of the righ side othe the other sprite
+		return false;//if this object is right of the righ side othe the other bounding box
 	}
 
 
@@ -304,6 +328,14 @@ bool GameObject::AABB_CollisionDetection(GameObject other)
 
 
 
+	//if (thisPos(0) + radius < otherPos(0) - size(0) &&
+	//	thisPos(0) - radius > otherPos(0) + size(0) &&
+	//	thisPos(1) + radius< otherPos(1) - size(1) &&
+	//	thisPos(1) - radius > otherPos(1) + size(1))
+	//{
+	//	return true;
+	//}
+	//else return false;
 
 
 

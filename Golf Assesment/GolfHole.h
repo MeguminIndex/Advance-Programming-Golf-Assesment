@@ -1,5 +1,6 @@
 #pragma once
 #include "GameObject.h"
+#include "GolfBall.h"
 
 class GolfHole : public GameObject
 {
@@ -20,7 +21,7 @@ public:
 
 	};
 
-
+	void DoBallCollision(GolfBall &b);
 
 
 

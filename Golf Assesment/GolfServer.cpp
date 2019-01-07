@@ -1,12 +1,12 @@
 #include "GolfServer.h"
 
 
-
-GolfServer::GolfServer()
-{
-}
-
-
-GolfServer::~GolfServer()
-{
-}
+//
+//GolfServer::GolfServer()
+//{
+//}
+//
+//
+//GolfServer::~GolfServer()
+//{
+//}

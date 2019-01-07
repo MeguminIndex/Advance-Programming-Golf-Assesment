@@ -2,18 +2,25 @@
 //
 
 #include "stdafx.h"
-#include "stdafx.h"
 #include<glut.h>
 #include<math.h>
 
 #include"simulation.h"
 #include"Course.h"
 
+#include "threaded_client.h"
+#include "ThreadedServer.h"
 
-int playersID = 0;;
+Client client;
 
 
-int strokes = 0;
+
+
+int playersID = -1;
+std::map<int,int> strokes;
+
+
+int currentPlayer = 1;
 
 
 
@@ -30,24 +37,17 @@ float gCuePowerMin = 0.1;
 float gCueBallFactor = 8.0;
 bool gDoCue = true;
 
+#pragma region Camera Variables
 //camera variables
 vec3 gCamPos(2.0,4.0,1.9);
 vec3 gCamLookAt(-2.0, 0.5, 0.3);
 bool gCamRotate = true;
-float gCamRotSpeed = 1.6;
-float gCamMoveSpeed = 2.5;
-bool gCamL = false;
-bool gCamR = false;
-bool gCamU = false;
-bool gCamD = false;
-bool gCamZin = false;
-bool gCamZout = false;
 
 // angle of rotation for the camera direction
 float angle = 0.0f;
 
 // actual vector representing the camera's direction
-float lx = 0.0f, lz = -1.0f, ly =0.0f;
+float lx = 0.0f, lz = -1.0f, ly = 0.0f;
 
 // XZ position of the camera
 float x = 0.0f, z = 5.0f, y = 1.0f;
@@ -56,108 +56,14 @@ float x = 0.0f, z = 5.0f, y = 1.0f;
 //when no key is being presses
 float deltaAngle = 0.0f;
 float deltaMove = 0;
+#pragma endregion
+
 int xOrigin = -1;
 
 
 
 //rendering options
 #define DRAW_SOLID	(0)
-
-void DoCamera(int ms)
-{
-	static const vec3 up(0.0,1.0,0.0);
-
-
-
-	if(gCamRotate)
-	{
-		if(gCamL)
-		{
-			vec3 camDir = (gCamLookAt - gCamPos).Normalised();
-			vec3 localL = up.Cross(camDir);
-			vec3 inc = (localL* ((gCamRotSpeed*ms)/1000.0) );
-			gCamLookAt = gCamPos + camDir + inc;
-		}
-		if(gCamR)
-		{
-			vec3 camDir = (gCamLookAt - gCamPos).Normalised();
-			vec3 localR = up.Cross(camDir);
-			vec3 inc = (localR* ((gCamRotSpeed*ms)/1000.0) );
-			gCamLookAt = gCamPos + camDir - inc;
-		}
-		if(gCamU)
-		{
-			vec3 camDir = (gCamLookAt - gCamPos).Normalised();
-			vec3 localR = camDir.Cross(up);
-			vec3 localUp = localR.Cross(camDir);
-			vec3 inc = (localUp* ((gCamMoveSpeed*ms)/1000.0) );
-			gCamLookAt = gCamPos + camDir + inc;
-		}
-		if(gCamD)
-		{
-			vec3 camDir = (gCamLookAt - gCamPos).Normalised();
-			vec3 localR = camDir.Cross(up);
-			vec3 localUp = localR.Cross(camDir);
-			vec3 inc = (localUp* ((gCamMoveSpeed*ms)/1000.0) );
-			gCamLookAt = gCamPos + camDir - inc;
-		}		
-	}
-	else
-	{
-		if(gCamL)
-		{
-			vec3 camDir = (gCamLookAt - gCamPos).Normalised();
-			vec3 localL = up.Cross(camDir);
-			vec3 inc = (localL* ((gCamMoveSpeed*ms)/1000.0) );
-			gCamPos += inc;
-			gCamLookAt += inc;
-		}
-		if(gCamR)
-		{
-			vec3 camDir = (gCamLookAt - gCamPos).Normalised();
-			vec3 localR = camDir.Cross(up);
-			vec3 inc = (localR* ((gCamMoveSpeed*ms)/1000.0) );
-			gCamPos += inc;
-			gCamLookAt += inc;
-		}
-		if(gCamU)
-		{
-			vec3 camDir = (gCamLookAt - gCamPos).Normalised();
-			vec3 localR = camDir.Cross(up);
-			vec3 localUp = localR.Cross(camDir);
-			vec3 inc = (localUp* ((gCamMoveSpeed*ms)/1000.0) );
-			gCamPos += inc;
-			gCamLookAt += inc;
-		}
-		if(gCamD)
-		{
-			vec3 camDir = (gCamLookAt - gCamPos).Normalised();
-			vec3 localR = camDir.Cross(up);
-			vec3 localDown = camDir.Cross(localR);
-			vec3 inc = (localDown* ((gCamMoveSpeed*ms)/1000.0) );
-			gCamPos += inc;
-			gCamLookAt += inc;
-		}
-	}
-
-	if(gCamZin)
-	{
-		vec3 camDir = (gCamLookAt - gCamPos).Normalised();
-		vec3 inc = (camDir* ((gCamMoveSpeed*ms)/1000.0) );
-		gCamPos += inc;
-		gCamLookAt += inc;
-	}
-	if(gCamZout)
-	{
-		vec3 camDir = (gCamLookAt - gCamPos).Normalised();
-		vec3 inc = (camDir* ((gCamMoveSpeed*ms)/1000.0) );
-		gCamPos -= inc;
-		gCamLookAt -= inc;
-	}
-
-	std::cout << " Cam X: "<< gCamPos(0)<<" Cam Y: " << gCamPos(1)<< " Cam Z: " << gCamPos(2) << std::endl;
-	std::cout << " Cam Look X: " << gCamLookAt(0) << " Cam Look Y: " << gCamLookAt(1) << " Cam Look Z: " << gCamLookAt(2) << std::endl;
-}
 
 
 void computePos(float deltaMove) {
@@ -178,13 +84,23 @@ void drawBitmapText(char* string, float x, float y, float z, float r = 1, float 
 		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, string[i]);
 	}
 
-
-	
-
 }
 
 
+void AddStroke()
+{
+	//This code could be repeatred in several areas so made it a function
+	strokes[currentPlayer] += 1;
 
+	if (currentPlayer != 2 && gTable.playerBalls[2].finishedCurrentHole == false)
+	{
+		currentPlayer = 2;
+	}
+	else if (gTable.playerBalls[1].finishedCurrentHole == false)
+	{
+		currentPlayer = 1;
+	}
+}
 
 void RenderScene(void) {
 	glEnable(GL_DEPTH_TEST);
@@ -193,7 +109,7 @@ void RenderScene(void) {
 	//set camera
 	glLoadIdentity();
 
-	vec3 ballPos = gTable.balls[playersID].GetPosition();
+	//vec3 ballPos = gTable.balls[playersID].GetPosition();
 
 	/*gluLookAt(ballPos(1), ballPos(2) + 2,ballPos(0),
  (ballPos(1) + 0.0f) + gCamLookAt(0), (ballPos(2) + -0.0f) + gCamLookAt(1), ballPos(0) + gCamLookAt(2),0.0f,1.0f,0.0f);
@@ -220,11 +136,18 @@ void RenderScene(void) {
 
 	//draw the ball
 	//glColor3f(1.0,1.0,1.0);
-	for(int i=0;i<NUM_BALLS;i++)
-	{
+	//for(int i=0;i<NUM_BALLS;i++)
+	//{
 
-		gTable.balls[i].Draw();	
+	//	gTable.balls[i].Draw();	
+	//}
+	
+	for (auto const& balls : gTable.playerBalls)
+	{
+		if (balls.second.finishedCurrentHole == false)
+		((GameObject)balls.second).Draw();
 	}
+
 
 
 	for (int i = 0; i<NUM_HOLES; i++)
@@ -237,21 +160,12 @@ void RenderScene(void) {
 	glColor3f(1.0,1.0,1.0);
 
 	
-
+	//int numWalls = gTable.cushions.size();
 	//draw the table
 	for(int i=0;i<NUM_CUSHIONS;i++)
 	{	
-	/*	vec3 position = gTable.cushions[i].GetPosition();
-
-		glBegin(GL_LINE_LOOP);
-		glVertex3f (gTable.cushions[i].vertices[0](0) - position(0), 0.0 - position(2), gTable.cushions[i].vertices[0](1) - position(1));
-		glVertex3f (gTable.cushions[i].vertices[0](0) - position(0), 0.1 - position(2), gTable.cushions[i].vertices[0](1) - position(1));
-		glVertex3f (gTable.cushions[i].vertices[1](0) - position(0), 0.1 - position(2), gTable.cushions[i].vertices[1](1) - position(1));
-		glVertex3f (gTable.cushions[i].vertices[1](0) - position(0), 0.0 - position(2), gTable.cushions[i].vertices[1](1) - position(1));
-		glEnd();*/
-
-
-		gTable.cushions[i].Draw();
+		//Call each of the walls draw function;
+		gTable.cWalls[i].Draw();
 
 	}
 
@@ -298,7 +212,10 @@ void RenderScene(void) {
 	//draw the cue
 	if(gDoCue)
 	{
-		vec3 position = gTable.balls[0].GetPosition();
+		//vec3 position = gTable.balls[0].GetPosition();
+
+		vec3 position = gTable.playerBalls[currentPlayer].GetPosition();
+
 
 		glBegin(GL_LINES);
 		float cuex = sin(gCueAngle) * gCuePower;
@@ -338,14 +255,15 @@ void RenderScene(void) {
 
 	//Texte(0, 12, "Hey !");
 	//drawGuiBackground();
-
-	char buffer[20];
-
-	sprintf(buffer,"Strokes: %d", strokes);
-	//string mystring = std::to_string(strokes);
-
-	drawBitmapText(buffer, x+lx, y+0.25f, z +lz, 0, 1, 0);
-
+	float i = 0.2f;
+	for (auto const& scr : strokes)
+	{
+		char buffer[20];
+		sprintf(buffer, "Strokes: %d",scr.second);
+		//string mystring = std::to_string(strokes);
+		drawBitmapText(buffer, x + lx, y + i , z + lz, 0, 1, 0);
+		i+=0.1f;
+	}
 	glFlush();
 	glutSwapBuffers();
 }
@@ -412,26 +330,37 @@ void KeyboardFunc(unsigned char key, int x, int y)
 	case ('s'): deltaMove = -0.5f; break;
 
 
+	case ('r'):
+	{
+		gTable.playerBalls[currentPlayer].Reset();
+		AddStroke();
+	}
+
 	case(13):
 		{
 			if(gDoCue)
 			{
-				strokes += 1;
+				
+
 
 				vec3 imp(	(-sin(gCueAngle) * gCuePower * gCueBallFactor),
 							(-cos(gCueAngle) * gCuePower * gCueBallFactor),0.0f);
-				gTable.balls[0].ApplyImpulse(imp);				
+					
+				gTable.playerBalls[currentPlayer].ApplyImpulse(imp);
+			
+				AddStroke();
+
 			}
 			break;
 		}
 	case(27):
 		{
-			for(int i=0;i<NUM_BALLS;i++)
-			{
-				gTable.balls[i].Reset();
 
-				
-			}
+		for (auto & balls : gTable.playerBalls)
+		{
+			balls.second.Reset();
+		}
+		
 			break;
 		}
 	case(32):
@@ -439,36 +368,7 @@ void KeyboardFunc(unsigned char key, int x, int y)
 			gCamRotate = false;
 			break;
 		}
-	//case('z'):
-	//	{
-	//		gCamL = true;
-	//		break;
-	//	}
-	//case('c'):
-	//	{
-	//		gCamR = true;
-	//		break;
-	//	}
-	//case('s'):
-	//	{
-	//		gCamU = true;
-	//		break;
-	//	}
-	//case('x'):
-	//	{
-	//		gCamD = true;
-	//		break;
-	//	}
-	//case('f'):
-	//	{
-	//		gCamZin = true;
-	//		break;
-	//	}
-	//case('v'):
-	//	{
-	//		gCamZout = true;
-	//		break;
-	//	}
+
 	}
 
 }
@@ -518,8 +418,15 @@ void KeyboardUpFunc(unsigned char key, int x, int y)
 	//	}
 	case('j'):
 	{
+
+		if (client.isConnected())
+		{
+			client.sendthis("TestMSG");
+			client.interact();
+		}
+
 		std::cout << "J pressed" << std::endl;
-		gTable.cushions[0].SetScale(vec3(2));
+		gTable.cWalls[0].SetScale(vec3(2));
 		break;
 	}
 	}
@@ -603,6 +510,9 @@ void InitLights(void)
 
 void UpdateScene(int ms) 
 {
+	if(client.isConnected())
+	client.interact();
+
 	if(gTable.AnyBallsMoving()==false) gDoCue = true;
 	else gDoCue = false;
 
@@ -625,11 +535,43 @@ void UpdateScene(int ms)
 
 	glutTimerFunc(SIM_UPDATE_MS, UpdateScene, SIM_UPDATE_MS);
 	glutPostRedisplay();
+
+	//delete score;
+	if (client.isConnected())
+	client.sendScore(1,strokes[1]);
+
 }
 
-int _tmain(int argc, _TCHAR* argv[])
+
+
+int _tmain(int argc, const char* argv[])
 {
-	gTable.SetupCushions();
+	currentPlayer = 1;
+
+	strokes[1] = 0;
+	strokes[2] = 0;
+
+	gTable.playerBalls[1] = GolfBall();
+	gTable.playerBalls[2] = GolfBall();
+
+
+	printf("Please select a course type '1' or '2' ");
+	int in = 1;
+
+	std::cin >> in;
+
+	if (in == 2)
+	{
+		gTable.SetupCourseTwo();
+	}
+	else
+	{
+		gTable.SetupCourse();
+	}
+
+
+
+	
 
 	glutInit(&argc, ((char **)argv));
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE| GLUT_RGBA);
@@ -660,10 +602,38 @@ int _tmain(int argc, _TCHAR* argv[])
 	glutMouseFunc(MouseButton);
 	glutMotionFunc(mouseMove);
 
+
+	
+
+	if (argc < 2) {
+		
+		printf("To start a client input the port argument then ip adress\n", argv[0]);
+		printf("Usage: %s port ipadress\n", argv[0]);
+		printf("BY DEFAULT IT WILL RUN AS CLIENT ATTEMPTING TO CONNECT TO LOCALHOST ON PORT 5555\n", argv[0]);
+
+		
+		client.start("localhost", "5555");
+		client.interact();
+
+	}
+	else if (argc < 3) {
+
+		//StartServer(argv);	
+	}
+	else
+	{
+		
+		client.start(argv[2], argv[1]);
+		client.interact();
+	}
+
+
+
 	glEnable(GL_DEPTH_TEST);
 	glutMainLoop();
 
 
+	
 
 
 }
