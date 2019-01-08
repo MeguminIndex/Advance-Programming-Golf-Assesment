@@ -16,11 +16,12 @@ Client client;
 
 
 
-int playersID = -1;
+//int playersID = -1;
 std::map<int,int> strokes;
 
-
-int currentPlayer = 1;
+std::vector<int> playersIDs = {1,2};// ID's of the players
+int idInd = 0;//position in player array
+int currentPlayer = playersIDs[0]; //current player whos stroking
 
 
 
@@ -56,9 +57,12 @@ float x = 0.0f, z = 5.0f, y = 1.0f;
 //when no key is being presses
 float deltaAngle = 0.0f;
 float deltaMove = 0;
+int xOrigin = -1;
 #pragma endregion
 
-int xOrigin = -1;
+
+
+
 
 
 
@@ -77,9 +81,9 @@ void computePos(float deltaMove) {
 void drawBitmapText(char* string, float x, float y, float z, float r = 1, float g =1, float b = 1)
 {
 	int j = strlen(string);
-
-	glRasterPos3f(x, y, z);
 	glColor3f(r, g, b);
+	glRasterPos3f(x, y, z);
+	
 	for (int i = 0; i < j; i++) {
 		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, string[i]);
 	}
@@ -92,14 +96,20 @@ void AddStroke()
 	//This code could be repeatred in several areas so made it a function
 	strokes[currentPlayer] += 1;
 
-	if (currentPlayer != 2 && gTable.playerBalls[2].finishedCurrentHole == false)
-	{
-		currentPlayer = 2;
-	}
-	else if (gTable.playerBalls[1].finishedCurrentHole == false)
-	{
-		currentPlayer = 1;
-	}
+	idInd++;
+	if (idInd > strokes.size() - 1)
+		idInd = 0;
+
+	currentPlayer = playersIDs[idInd];
+
+	//if (currentPlayer != 2 && gTable.playerBalls[2].finishedCurrentHole == false)
+	//{
+	//	currentPlayer = 2;
+	//}
+	//else if (gTable.playerBalls[1].finishedCurrentHole == false)
+	//{
+	//	currentPlayer = 1;
+	//}
 }
 
 void RenderScene(void) {
@@ -188,26 +198,8 @@ void RenderScene(void) {
 	//	#endif
 	//	glPopMatrix();		
 	//}
-	/*
-	glBegin(GL_LINE_LOOP);
-	glVertex3f (TABLE_X, 0.0, -TABLE_Z);
-	glVertex3f (TABLE_X, 0.1, -TABLE_Z);
-	glVertex3f (TABLE_X, 0.1, TABLE_Z);
-	glVertex3f (TABLE_X, 0.0, TABLE_Z);
-	glEnd();
-	glBegin(GL_LINE_LOOP);
-	glVertex3f (TABLE_X, 0.0, -TABLE_Z);
-	glVertex3f (TABLE_X, 0.1, -TABLE_Z);
-	glVertex3f (-TABLE_X, 0.1, -TABLE_Z);
-	glVertex3f (-TABLE_X, 0.0, -TABLE_Z);
-	glEnd();
-	glBegin(GL_LINE_LOOP);
-	glVertex3f (TABLE_X, 0.0, TABLE_Z);
-	glVertex3f (TABLE_X, 0.1, TABLE_Z);
-	glVertex3f (-TABLE_X, 0.1, TABLE_Z);
-	glVertex3f (-TABLE_X, 0.0, TABLE_Z);
-	glEnd();
-	*/
+	
+
 
 	//draw the cue
 	if(gDoCue)
@@ -230,24 +222,6 @@ void RenderScene(void) {
 	//glPopMatrix();
 
 
-	//UI
-
-	//unsigned char string[] = "The quick god jumps over the lazy brown fox.";
-	//float w;
-	//w = glutBitmapLength(GLUT_BITMAP_8_BY_13, string);
-
-	//glRasterPos2f(0., 0.);
-
-	//float x = .5; /* Centre in the middle of the window */
-	//glRasterPos2f(x - (float)w / 2, 0.);
-
-	//glColor3f(1.0, 0.0, 0.0);
-
-	//int len = strlen(string);
-	//for (i = 0; i < len; i++) {
-	//	glutBitmapCharacter(GLUT_BITMAP_8_BY_13, *string);
-	//}
-
 
 	glDisable(GL_DEPTH_TEST);
 
@@ -255,15 +229,31 @@ void RenderScene(void) {
 
 	//Texte(0, 12, "Hey !");
 	//drawGuiBackground();
-	float i = 0.2f;
+	float i = 0.15f;
 	for (auto const& scr : strokes)
 	{
-		char buffer[20];
-		sprintf(buffer, "Strokes: %d",scr.second);
+		vec3 colour = vec3(0, 1, 0);
+
+		if (scr.first == currentPlayer)
+		{
+			colour = vec3(0, 1, 1);
+		}
+
+		char buffer[50];
+		sprintf(buffer, "Player: %d Strokes: %d",scr.first,scr.second);
 		//string mystring = std::to_string(strokes);
-		drawBitmapText(buffer, x + lx, y + i , z + lz, 0, 1, 0);
-		i+=0.1f;
+		drawBitmapText(buffer, x + lx, y + i , z + lz, colour(0), colour(1), colour(2));
+		i+=0.05;
 	}
+
+	if (gTable.courseFinished == true)
+	{
+		char buffer[20];
+		sprintf(buffer, "Game Finished");
+		//string mystring = std::to_string(strokes);
+		drawBitmapText(buffer, x + lx, y, z + lz, 0, 1, 0);		
+	}
+
 	glFlush();
 	glutSwapBuffers();
 }
@@ -553,6 +543,9 @@ int _tmain(int argc, const char* argv[])
 
 	gTable.playerBalls[1] = GolfBall();
 	gTable.playerBalls[2] = GolfBall();
+	//for local multiplayer ID 1 & 2 they can keep ascending if so wished.
+	gTable.playerBalls[1].ballID = 1;
+	gTable.playerBalls[2].ballID = 2;
 
 
 	printf("Please select a course type '1' or '2' ");
@@ -570,6 +563,8 @@ int _tmain(int argc, const char* argv[])
 	}
 
 
+	//at start of game update current player to the first ID in list
+	currentPlayer = playersIDs[idInd];
 
 	
 

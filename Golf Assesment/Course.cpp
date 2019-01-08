@@ -494,10 +494,8 @@ void Course::SetupCourseTwo()
 
 		for (int i = 0; i < NUM_CUSHIONS; i++)
 		{
-			//cushions[i].MakeCentre();
-			//cushions[i].MakeNormal();
+		
 			cWalls[i].SetUpMesh();
-
 			cWalls[i].colour = vec3(1, 0, 1);
 			//cushions[i].SetDrawMode(DrawMode::Solid);
 		}
@@ -522,11 +520,11 @@ void Course::SetupCourseTwo()
 
 		cWalls[5].SetPosition(12.6, 9.8, TABLE_Y);
 
-		holes[0].SetPosition(16.6, 9.5, 0.0);
+		holes[0].SetPosition(15.6, 9.8, 0.0);
 
 
 		//hole two positions
-		holeStartPos[1] = vec3(5.0, 15.5, 0.0);
+		holeStartPos[1] = vec3(4.5, 19, 0.0);
 
 		cWalls[6].SetScale(vec3(1, 3, 1));
 		cWalls[6].SetPosition(5, 17.4, TABLE_Y);
@@ -544,7 +542,7 @@ void Course::SetupCourseTwo()
 
 		cWalls[11].SetPosition(2.6, 19.8, TABLE_Y);
 
-		holes[1].SetPosition(5.1, 19.5, 0.0);
+		holes[1].SetPosition(5.0, 15.5, 0.0);
 
 
 
@@ -578,6 +576,7 @@ void Course::NextHole()
 	if (currentHole >= NUM_HOLES)
 	{
 		std::cout << "Game Finished" << std::endl;
+		courseFinished = true;
 		return;
 	}
 

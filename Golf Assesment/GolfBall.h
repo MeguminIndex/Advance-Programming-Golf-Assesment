@@ -7,8 +7,6 @@ class GolfBall : public GameObject
 public:
 
 	int ballID;
-
-
 	bool finishedCurrentHole;
 	vec3 lastPos;
 

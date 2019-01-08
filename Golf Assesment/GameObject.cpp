@@ -93,7 +93,6 @@ void GameObject::SetScale(vec3 newscale)
 
 	//before setting new scale divde verticies by current scale
 	//then multiply by new scale and set new scale value
-
 	int n = sizeof(vertices) / sizeof(*vertices);
 
 	for (int i = 0; i < n; i++)
@@ -106,8 +105,11 @@ void GameObject::SetScale(vec3 newscale)
 		vertices[i](1) *= newscale(1);
 		vertices[i](2) *= newscale(2);
 	}
-
+	
 	scale = newscale;
+	//update infomation
+	MakeNormal();
+	MakeCentre();
 
 }
 
@@ -261,30 +263,16 @@ void GameObject::HitBall(GameObject &b)
 bool GameObject::AABB_CollisionDetection(GameObject other)
 {
 	
-	
+	//grabs and calculats the size of the other object
 	vec3 size = other.vertices[0] - other.vertices[1];
 	//size /= 2;
 	size = size.Abs();
 	
 	//size = other.d_Size /2;
 
-
-	//thisRight = modelMatrix[3].x + sizeH;
-
-	//thisBottom = modelMatrix[3].y + sizeH;
-
-	//rightOther = otherX + otherWidth;
-
-	//bottomOther = otherY + otherHeight;
-
 	vec3 thisPos = vec3(0, 0, 0) - GetPosition(), thisScale = GetScale();
 	vec3 otherPos = other.vertices[0] - other.GetPosition(), otherScale = other.GetScale();
 
-	//vec3 thisPos = GetPosition();
-	//vec3 otherPos = other.GetPosition();
-
-
-	
 
 	float thisRight, thisBottom;
 	float bottomOther, rightOther;

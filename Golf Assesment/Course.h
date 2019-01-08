@@ -25,7 +25,7 @@ public:
 	~Course();
 
 	int currentHole = -1;
-
+	bool courseFinished = false;
 	//a dictionary of player balls which can be acces by player ID ~ thinking ahead for multiplayer as each pc will be assigned a unique ID
 	std::map<int, GolfBall> playerBalls;
 
