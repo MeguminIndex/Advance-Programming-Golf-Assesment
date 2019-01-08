@@ -258,22 +258,6 @@ void Course::SetupCourse(void)
 
 void Course::Update(int ms)
 {
-	
-
-	//check for collisions for each ball
-	for (int i = 0; i<NUM_BALLS; i++)
-	{
-		for (int j = 0; j<NUM_CUSHIONS; j++)
-		{
-			//balls[i].DoPlaneCollision(cushions[j],ms);
-		}
-
-		//lets ignore this for now
-		/*for (int j = (i + 1); j<NUM_BALLS; j++)
-		{
-			balls[i].DoBallCollision(balls[j]);
-		}*/
-	}
 
 	for (auto & x : playerBalls)
 	{
@@ -286,8 +270,6 @@ void Course::Update(int ms)
 
 		}
 
-
-		
 		
 	}
 

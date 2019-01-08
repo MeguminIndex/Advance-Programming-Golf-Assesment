@@ -1,8 +1,5 @@
 #include "GolfBall.h"
 
-int GolfBall::ballIndexCnt = 0;
-
-
 
 void GolfBall::Reset()
 {

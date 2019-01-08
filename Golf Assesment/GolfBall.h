@@ -10,11 +10,11 @@ public:
 	bool finishedCurrentHole;
 	vec3 lastPos;
 
-	int index;
+	
 	void Reset();
 
 	GolfBall(){
-		index = ballIndexCnt++; Reset();
+		Reset();
 		_isSphere = true;
 		finishedCurrentHole = false;
 

@@ -19,7 +19,7 @@ Client client;
 //int playersID = -1;
 std::map<int,int> strokes;
 
-std::vector<int> playersIDs = {1,2};// ID's of the players
+std::vector<int> playersIDs = {1,2,3};// ID's of the players
 int idInd = 0;//position in player array
 int currentPlayer = playersIDs[0]; //current player whos stroking
 
@@ -95,15 +95,31 @@ void drawBitmapText(char* string, float x, float y, float z, float r = 1, float 
 }
 
 
+void Addplayer(int playerID)
+{
+	playersIDs.push_back(playerID);
+	strokes[playerID] = 0;
+	gCourse.playerBalls[playerID] = GolfBall();
+	gCourse.playerBalls[playerID].ballID = playerID;
+}
+
 void AddStroke()
 {
 	//This code could be repeatred in several areas so made it a function
 	//Adds a stroke to current player
 	strokes[currentPlayer] += 1;
 
-	idInd++;//incriments the index which is tracked deciding next player
-	if (idInd > strokes.size() - 1)//check the index is within bounds
-		idInd = 0;//if its not reset to first player
+	
+	do
+	{
+
+		idInd++;//incriments the index which is tracked deciding next player
+		if (idInd > strokes.size() - 1)//check the index is within bounds
+			idInd = 0;//if its not reset to first player
+
+	} while (gCourse.playerBalls[playersIDs[idInd]].finishedCurrentHole == true);
+	
+
 
 	currentPlayer = playersIDs[idInd];//update current player to the next
 
@@ -320,7 +336,7 @@ void KeyboardFunc(unsigned char key, int x, int y)
 	case ('r'):
 	{
 		gCourse.playerBalls[currentPlayer].Reset();
-		AddStroke();
+		//AddStroke();
 	}
 
 	case(13):
@@ -533,16 +549,26 @@ void UpdateScene(int ms)
 
 int _tmain(int argc, const char* argv[])
 {
-	currentPlayer = 1;
+	//currentPlayer = 1;
 
-	strokes[1] = 0;
-	strokes[2] = 0;
+	//strokes[1] = 0;
+	//strokes[2] = 0;
 
-	gCourse.playerBalls[1] = GolfBall();
-	gCourse.playerBalls[2] = GolfBall();
-	//for local multiplayer ID 1 & 2 they can keep ascending if so wished.
-	gCourse.playerBalls[1].ballID = 1;
-	gCourse.playerBalls[2].ballID = 2;
+	for (auto i : playersIDs)
+	{
+		strokes[i] = 0;
+		gCourse.playerBalls[i] = GolfBall();
+		gCourse.playerBalls[i].ballID = i;
+	}
+
+	//gCourse.playerBalls[1] = GolfBall();
+	//gCourse.playerBalls[2] = GolfBall();
+	////for local multiplayer ID 1 & 2 they can keep ascending if so wished.
+	//gCourse.playerBalls[1].ballID = 1;
+	//gCourse.playerBalls[2].ballID = 2;
+
+	//at start of game update current player to the first ID in list
+	currentPlayer = playersIDs[idInd];
 
 
 	printf("Please select a course type '1' or '2' ");
@@ -560,8 +586,7 @@ int _tmain(int argc, const char* argv[])
 	}
 
 
-	//at start of game update current player to the first ID in list
-	currentPlayer = playersIDs[idInd];
+	
 
 	
 
