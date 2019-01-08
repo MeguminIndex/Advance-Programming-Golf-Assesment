@@ -25,7 +25,7 @@ int currentPlayer = playersIDs[0]; //current player whos stroking
 
 
 
-Course gTable;
+Course gCourse; //course class
 
 //cue variables
 float gCueAngle = 0.0;
@@ -80,10 +80,14 @@ void computePos(float deltaMove) {
 
 void drawBitmapText(char* string, float x, float y, float z, float r = 1, float g =1, float b = 1)
 {
+	//gets length of the passed in string
 	int j = strlen(string);
+	//sets glbuffer colour
 	glColor3f(r, g, b);
+	//position of the text
 	glRasterPos3f(x, y, z);
 	
+	//loop through each character and render it
 	for (int i = 0; i < j; i++) {
 		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, string[i]);
 	}
@@ -94,22 +98,15 @@ void drawBitmapText(char* string, float x, float y, float z, float r = 1, float 
 void AddStroke()
 {
 	//This code could be repeatred in several areas so made it a function
+	//Adds a stroke to current player
 	strokes[currentPlayer] += 1;
 
-	idInd++;
-	if (idInd > strokes.size() - 1)
-		idInd = 0;
+	idInd++;//incriments the index which is tracked deciding next player
+	if (idInd > strokes.size() - 1)//check the index is within bounds
+		idInd = 0;//if its not reset to first player
 
-	currentPlayer = playersIDs[idInd];
+	currentPlayer = playersIDs[idInd];//update current player to the next
 
-	//if (currentPlayer != 2 && gTable.playerBalls[2].finishedCurrentHole == false)
-	//{
-	//	currentPlayer = 2;
-	//}
-	//else if (gTable.playerBalls[1].finishedCurrentHole == false)
-	//{
-	//	currentPlayer = 1;
-	//}
 }
 
 void RenderScene(void) {
@@ -152,7 +149,7 @@ void RenderScene(void) {
 	//	gTable.balls[i].Draw();	
 	//}
 	
-	for (auto const& balls : gTable.playerBalls)
+	for (auto const& balls : gCourse.playerBalls)
 	{
 		if (balls.second.finishedCurrentHole == false)
 		((GameObject)balls.second).Draw();
@@ -163,7 +160,7 @@ void RenderScene(void) {
 	for (int i = 0; i<NUM_HOLES; i++)
 	{
 
-		gTable.holes[i].Draw();
+		gCourse.holes[i].Draw();
 	}
 
 
@@ -175,7 +172,7 @@ void RenderScene(void) {
 	for(int i=0;i<NUM_CUSHIONS;i++)
 	{	
 		//Call each of the walls draw function;
-		gTable.cWalls[i].Draw();
+		gCourse.cWalls[i].Draw();
 
 	}
 
@@ -206,7 +203,7 @@ void RenderScene(void) {
 	{
 		//vec3 position = gTable.balls[0].GetPosition();
 
-		vec3 position = gTable.playerBalls[currentPlayer].GetPosition();
+		vec3 position = gCourse.playerBalls[currentPlayer].GetPosition();
 
 
 		glBegin(GL_LINES);
@@ -239,14 +236,14 @@ void RenderScene(void) {
 			colour = vec3(0, 1, 1);
 		}
 
-		char buffer[50];
+		char buffer[50];//stores the resulting text which will be rendered.
 		sprintf(buffer, "Player: %d Strokes: %d",scr.first,scr.second);
-		//string mystring = std::to_string(strokes);
+		//pass the values into my textRendering function
 		drawBitmapText(buffer, x + lx, y + i , z + lz, colour(0), colour(1), colour(2));
 		i+=0.05;
 	}
 
-	if (gTable.courseFinished == true)
+	if (gCourse.courseFinished == true)
 	{
 		char buffer[20];
 		sprintf(buffer, "Game Finished");
@@ -322,7 +319,7 @@ void KeyboardFunc(unsigned char key, int x, int y)
 
 	case ('r'):
 	{
-		gTable.playerBalls[currentPlayer].Reset();
+		gCourse.playerBalls[currentPlayer].Reset();
 		AddStroke();
 	}
 
@@ -336,7 +333,7 @@ void KeyboardFunc(unsigned char key, int x, int y)
 				vec3 imp(	(-sin(gCueAngle) * gCuePower * gCueBallFactor),
 							(-cos(gCueAngle) * gCuePower * gCueBallFactor),0.0f);
 					
-				gTable.playerBalls[currentPlayer].ApplyImpulse(imp);
+				gCourse.playerBalls[currentPlayer].ApplyImpulse(imp);
 			
 				AddStroke();
 
@@ -346,7 +343,7 @@ void KeyboardFunc(unsigned char key, int x, int y)
 	case(27):
 		{
 
-		for (auto & balls : gTable.playerBalls)
+		for (auto & balls : gCourse.playerBalls)
 		{
 			balls.second.Reset();
 		}
@@ -416,7 +413,7 @@ void KeyboardUpFunc(unsigned char key, int x, int y)
 		}
 
 		std::cout << "J pressed" << std::endl;
-		gTable.cWalls[0].SetScale(vec3(2));
+		gCourse.cWalls[0].SetScale(vec3(2));
 		break;
 	}
 	}
@@ -503,7 +500,7 @@ void UpdateScene(int ms)
 	if(client.isConnected())
 	client.interact();
 
-	if(gTable.AnyBallsMoving()==false) gDoCue = true;
+	if(gCourse.AnyBallsMoving()==false) gDoCue = true;
 	else gDoCue = false;
 
 	if(gDoCue)
@@ -521,7 +518,7 @@ void UpdateScene(int ms)
 
 	//DoCamera(ms);
 
-	gTable.Update(ms);
+	gCourse.Update(ms);
 
 	glutTimerFunc(SIM_UPDATE_MS, UpdateScene, SIM_UPDATE_MS);
 	glutPostRedisplay();
@@ -541,11 +538,11 @@ int _tmain(int argc, const char* argv[])
 	strokes[1] = 0;
 	strokes[2] = 0;
 
-	gTable.playerBalls[1] = GolfBall();
-	gTable.playerBalls[2] = GolfBall();
+	gCourse.playerBalls[1] = GolfBall();
+	gCourse.playerBalls[2] = GolfBall();
 	//for local multiplayer ID 1 & 2 they can keep ascending if so wished.
-	gTable.playerBalls[1].ballID = 1;
-	gTable.playerBalls[2].ballID = 2;
+	gCourse.playerBalls[1].ballID = 1;
+	gCourse.playerBalls[2].ballID = 2;
 
 
 	printf("Please select a course type '1' or '2' ");
@@ -555,11 +552,11 @@ int _tmain(int argc, const char* argv[])
 
 	if (in == 2)
 	{
-		gTable.SetupCourseTwo();
+		gCourse.SetupCourseTwo();
 	}
 	else
 	{
-		gTable.SetupCourse();
+		gCourse.SetupCourse();
 	}
 
 

@@ -1,7 +1,5 @@
 #include "Transform.h"
 
-
-
 void Transform::SetPosition(vec3 newPos)
 {
 	position = newPos;
